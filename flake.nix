@@ -12,13 +12,14 @@
     {
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShell {
-          shellHook = "export DATABASE_URL=postgres://postgres:postgres@localhost:5432/pigeon_post";
           buildInputs =
             with pkgs;
             (
               [
                 nixd
                 nil
+                python313
+                python313Packages.flask
               ]
               ++ lib.optional stdenv.isLinux inotify-tools
             );
