@@ -12,17 +12,15 @@
     {
       devShells = eachSystem (pkgs: {
         default = pkgs.mkShell {
-          buildInputs =
-            with pkgs;
-            (
-              [
-                nixd
-                nil
-                python313
-                python313Packages.flask
-              ]
-              ++ lib.optional stdenv.isLinux inotify-tools
-            );
+          packages = [
+            (pkgs.python3.withPackages (python-pkgs: [
+              python-pkgs.fastapi
+              python-pkgs.python-dotenv
+              python-pkgs.pydantic
+              python-pkgs.fastapi-cli
+              python-pkgs.jinja2
+            ]))
+          ];
         };
       });
 
