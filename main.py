@@ -284,7 +284,7 @@ async def upload_and_search(request: Request, myFile: UploadFile = File(...), pa
             context = generate_context(data)
 
             return templates.TemplateResponse(
-                request=request,
+                request=results_front,
                 name="results.html",
                 context=context,
             )
