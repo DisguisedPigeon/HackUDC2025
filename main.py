@@ -36,7 +36,7 @@ print("Iniciando la aplicación...")
 logger.info("Iniciando la aplicación...")
 
 # Iniciar el mecanismo de recarga de token
-#start_token_refresh()
+start_token_refresh()
 
 # Configurar CORS
 app.add_middleware(
