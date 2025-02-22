@@ -26,3 +26,36 @@ El objetivo es crear una aplicación web o móvil que integre la [API de Visual 
 
 ## TODO
 - [ ] Visualizacion de prendas en WebGL
+
+## VirtualEnv
+
+Creamos el entorno virtual de python:
+
+```bash
+python -m venv venv
+```
+
+Activamos el entorno virtual (Linux/macOS):
+
+```bash
+source venv/bin/activate
+```
+
+Instalamos las dependencias:
+
+```bash
+pip install -r requirements.txt
+```
+
+Para desactivarlo:
+```bash
+deactivate
+```
+
+#### Nota
+
+Para actualizar los requirements.txt
+
+```bash
+pip freeze > requirements.txt
+```
