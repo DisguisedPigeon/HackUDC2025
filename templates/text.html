@@ -11,19 +11,30 @@
 {% endblock %}
 
 {% block content %}
-<div class="d-flex align-items-center justify-content-center vh-100">
-	<div class="card">
-		<div class=" card-body">
-			<form action="javascript:<PLACEHOLDER>()>">
-				<div class="row">
-					<div class="col-lg-8">
-						<input type="text" class="form-control" id="exampleInputPassword1">
+	<div class="d-flex align-items-center justify-content-center vh-100">
+		<div class="card">
+			<div class=" card-body">
+					<div class="row">
+						<div class="col-lg-8">
+						<br>
+						<form method="post" action="/results">
+						        <label>Image URL</label>
+						        <input type="text" id="user_input" class="form-control" name="user_input"
+						               placeholder="Enter image URL" required>
+						        <label>Page number</label>
+							<input type="text" id="page_number" class="form-control" name="page_number"
+						               placeholder="Enter page number" required>
+							<label>Product number</label>
+							<input type="text" id="product_number" class="form-control" name="product_number"
+						               placeholder="Enter product number per page" required>
+
+							<input class="submit" type="submit" value="Submit">
+					        <br>
+						</form>
+						</div>
+						
 					</div>
-					<div class="col-sm-2">
-						<button type="submit" class="btn btn-primary">Submit</button>
-					</div>
-				</div>
-			</form>
+			</div>
 		</div>
 	</div>
 </div>

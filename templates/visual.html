@@ -12,12 +12,18 @@
 
 {% block content %}
 <div class="d-flex align-items-center justify-content-center vh-100">
-	<div class="card">
-		<form action="javascript:<PLACEHOLDER>()>">
-			<div class=" card-body">
-				<div class="row">
-					<div>
-						<input type="file" id="myFile" name="filename">
+		<div class="card">
+			<form method="post" action="/upload-and-search" enctype="multipart/form-data">
+				<div class=" card-body">
+							<input type="file" id="myFile" name="myFile" required>
+							<div>
+							<label>Page number</label>
+							</div>
+							<input type="text" id="page_number" class="form-control" name="page_number"
+						               placeholder="Enter page number" required>
+							<label>Product number</label>
+							<input type="text" id="product_number" class="form-control" name="product_number"
+						               placeholder="Enter product number per page" required>
 					</div>
 				</div>
 				<div class="row mt-3">

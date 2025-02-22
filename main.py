@@ -20,7 +20,8 @@ logger = colorlog.getLogger()
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
-from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Response
+from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Response, Form
+from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -90,36 +91,87 @@ class VisualSearchRequest(BaseModel):
     page: int = 1
     per_page: int = 5
 
+def generate_context(data):
+    context = {}
+    context["other"] = True
+    context["page"] = 0 #page
+    #TODO: complete symbol dict
+    symbol = {
+        "EUR": "€"
+    }
+    cont = 1
+    cnt = 1
+    limits = len(data)
+    datas = []
+    for item in data:
+        oprice = item["price"]["value"]["original"]
+        datas.append({
+	"name": item["name"], 
+	"price": "Price: " + str(item["price"]["value"]["current"]) + " " + symbol[item["price"]["currency"]],
+	"oprice": "Original price: " + str(oprice) + " " + symbol[item["price"]["currency"]] if oprice == "" else "Original price: None",
+	"link": "Link: " + item["link"],
+	"brand": "Brand: " + item["brand"],
+        })
+        ++cnt
+        # We collect data in batchs of 3 elements
+        if cnt % 3 == 0:
+            context["results_" + str(cont)] = datas
+            ++cont
+            datas=[]
+    if cnt % 3 != 0:
+        context["results_" + str(cont)] = datas
+    return context
 
 @app.route("/")
 async def visual_search_front(request: Request) -> Response:
     return templates.TemplateResponse(request=request, name="visual.html", context={})
 
+@app.post("/results")
+async def results_front(request: Request, user_input: str = Form(...), page_number: str = Form(...), product_number: str = Form(...)) -> Response:
+    print(f"Iniciando búsqueda visual con image_url: {user_input}, page: {page_number}, per_page: {product_number}")
+    logger.info(f"Iniciando búsqueda visual con image_url: {user_input}, page: {page_number}, per_page: {product_number}")
+    params = {
+        "image": user_input,
+        "page": page_number,
+        "perPage": product_number
+    }
 
-@app.route("/results")
-async def results_front(request: Request, page: int = 0) -> Response:
-    return templates.TemplateResponse(
-        request=request,
-        name="results.html",
-        context={
-            "other": True,
-            "page": page,
-            "results_1": [
-                {"title": "Ligma", "description": "hallo"},
-                {"title": "Big", "description": "hallo"},
-                {"title": "Ballz", "description": "hallo"},
-            ],
-            "results_2": [
-                {"title": "Sugon", "description": "hallo"},
-                {"title": "Deez", "description": "hallo"},
-                {"title": "Nutz", "description": "hallo"},
-            ],
-        },
-    )
+    print(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    print(f"Parámetros de la solicitud: {params}")
+    logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    logger.info(f"Parámetros de la solicitud: {params}")
+
+    async with httpx.AsyncClient() as client:
+        response = await client.get(
+            INDITEX_VISUAL_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
+        )
+    
+    print(f"Código de respuesta de la API: {response.status_code}")
+    logger.info(f"Código de respuesta de la API: {response.status_code}")
+    
+        
+    if response.status_code == 200:
+        print("Búsqueda visual exitosa")
+        logger.info("Búsqueda visual exitosa")
+        data = response.json()
+        context = generate_context(data)
+                    
+        return templates.TemplateResponse(
+                request=request,
+                name="results.html",
+                context=context,
+            )
+
+    else:
+        print(f"Error en la búsqueda visual: {response.text}")
+        logger.error(f"Error en la búsqueda visual: {response.text}")
+        raise HTTPException(status_code=response.status_code, detail=f"Failed to fetch data from Inditex Visual Search API: {response.text}")
 
 
-@app.route("/text")
+@app.route("/text", methods=('GET', 'POST'))
 async def text_search_front(request: Request) -> Response:
+    if request.method == 'POST':
+        return redirect(url_for('results'))
     return templates.TemplateResponse(request=request, name="text.html", context={})
 
 
@@ -190,10 +242,10 @@ async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
 
 
 @app.post("/upload-and-search")
-async def upload_and_search(file: UploadFile = File(...)):
-    logger.info(f"Iniciando carga y búsqueda con archivo: {file.filename}")
-
-    file_extension = os.path.splitext(file.filename)[1]
+async def upload_and_search(myFile: UploadFile = File(...), page_number: str = Form(...), product_number: str = Form(...)):
+    logger.info(f"Iniciando carga y búsqueda con archivo: {myFile.filename}")
+    
+    file_extension = os.path.splitext(myFile.filename)[1]
     unique_filename = f"{uuid4()}{file_extension}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
 
@@ -207,7 +259,11 @@ async def upload_and_search(file: UploadFile = File(...)):
 
     logger.info(f"URL generada: {public_url}")
 
-    params = {"image": public_url, "page": 1, "perPage": 5}
+    params = {
+        "image": public_url,
+        "page": page_number,
+        "perPage": product_number
+    }
 
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
@@ -224,6 +280,15 @@ async def upload_and_search(file: UploadFile = File(...)):
         if response.status_code == 200:
             api_response = response.json()
             logger.info("Búsqueda visual exitosa")
+            data = response.json()
+            context = generate_context(data)
+
+            return templates.TemplateResponse(
+                request=request,
+                name="results.html",
+                context=context,
+            )
+
         else:
             api_response = {
                 "error": f"Failed to fetch data from Inditex Visual Search API: {response.text}"
@@ -292,3 +357,4 @@ if __name__ == "__main__":
 
     logger.info("Iniciando el servidor...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
+    
