@@ -1,3 +1,23 @@
+import logging
+import colorlog
+
+# Configurar el logger
+handler = colorlog.StreamHandler()
+handler.setFormatter(colorlog.ColoredFormatter(
+    "%(log_color)s%(levelname)s%(reset)s:     %(message)s",
+    log_colors={
+        'INFO': 'green',  # Solo INFO en verde
+        'DEBUG': 'white', # Se mantiene sin color
+        'WARNING': 'white',
+        'ERROR': 'white',
+        'CRITICAL': 'white'
+    }
+))
+
+logger = colorlog.getLogger()
+logger.addHandler(handler)
+logger.setLevel(logging.INFO)
+
 from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -9,11 +29,6 @@ import os
 import shutil
 from uuid import uuid4
 from get_key import start_token_refresh
-import logging
-
-# Configurar logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
