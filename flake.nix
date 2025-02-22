@@ -25,6 +25,7 @@
               python-pkgs.apscheduler
               python-pkgs.python-multipart
             ]))
+            pkgs.vscode-langservers-extracted
           ];
         };
       });
