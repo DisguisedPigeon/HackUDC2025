@@ -1,31 +1,30 @@
 {% extends 'base.html' %}
 
 {% block text %}
-	<li class="nav-item">
-		<a class="nav-link active" href="/text">Text search</a>
-	</li>
-	<li class="nav-item">
-		<a class="nav-link" aria-current="page" href="/">Visual
-			search</a>
-	</li>
+<li class="nav-item">
+	<a class="nav-link" aria-current="page" href="/">Visual
+		search</a>
+</li>
+<li class="nav-item">
+	<a class="nav-link active" href="/text">Text search</a>
+</li>
 {% endblock %}
 
 {% block content %}
-	<div class="d-flex align-items-center justify-content-center vh-100">
-		<div class="card">
-			<div class=" card-body">
-				<form action="javascript:<PLACEHOLDER>()>">
-					<div class="row">
-						<div class="col-lg-8">
-							<input type="text" class="form-control"
-								id="exampleInputPassword1">
-						</div>
-						<div class="col-sm-2">
-							<button type="submit" class="btn btn-primary">Submit</button>
-						</div>
+<div class="d-flex align-items-center justify-content-center vh-100">
+	<div class="card">
+		<div class=" card-body">
+			<form action="javascript:<PLACEHOLDER>()>">
+				<div class="row">
+					<div class="col-lg-8">
+						<input type="text" class="form-control" id="exampleInputPassword1">
 					</div>
-				</form>
-			</div>
+					<div class="col-sm-2">
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
+</div>
 {% endblock %}

@@ -5,35 +5,37 @@
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
 		crossorigin="anonymous"></script>
+	<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body>
+<body data-bs-theme="dark">
 	<nav class="navbar navbar-expand-lg bg-body-tertiary">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#">PMEC</a>
-			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<a class="nav-link" href="#">
+				<img src="/static/PMEC.png" alt="Text search image" style="height: 20px;" />
+			</a>
+			<div class="collapse navbar-collapse justify-content-end" id="navbarNavDropdown">
 				<ul class="navbar-nav">
-        				{% block visual %} {% endblock %}
-        				{% block text %} {% endblock %}
+					{% block visual %} {% endblock %}
+					{% block text %} {% endblock %}
 					{% if other %}
 
-	<li class="nav-item">
-		<a class="nav-link " aria-current="page" href="/">Visual
-			search</a>
-	</li>
-	<li class="nav-item">
-		<a class="nav-link" href="/text">Text search</a>
-	</li>				
+
+					<li class="nav-item">
+						<a class="nav-link " aria-current="page" href="/">Visual
+							search</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/text">Text search</a>
+					</li>
 					{% endif %}
 				</ul>
 			</div>
-		</div>
 	</nav>
-	<hr>
 	<div>
-        	{% block content %} {% endblock %}
+		{% block content %} {% endblock %}
 	</div>
-	
+
 </body>

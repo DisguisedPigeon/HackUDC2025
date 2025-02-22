@@ -1,69 +1,69 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-body">
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
-				</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">
+				<button type="button" class="btn-close" data-bs-dismiss="modal"
+					aria-label="Close"></button>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 56px);">
-		<div class="container text-center">
-			{% block row %}
-				{% set results = results_1 %}
-				{% include 'results_list.html' %}
-			{% endblock %}
+<div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 56px);">
+	<div class="container text-center">
+		{% block row %}
+		{% set results = results_1 %}
+		{% include 'results_list.html' %}
+		{% endblock %}
 
-			{% block row2%}
-				{% set results = results_2 %}
-				{% include 'results_list.html' %}
-			{% endblock %}
-		</div>
+		{% block row2%}
+		{% set results = results_2 %}
+		{% include 'results_list.html' %}
+		{% endblock %}
 	</div>
+</div>
 
-	<div class="d-flex justify-content-center position-absolute bottom-0 start-50 translate-middle-x">
-		<nav aria-label="Page navigation example">
-			<ul class="pagination">
-				<li class="page-item">
-					{% if page == 0 %}
-					<a class="page-link disabled" href="#" aria-label="Previous">
-						<span aria-hidden="true">&laquo;</span>
-					</a>
-					{% else %}
-					<a class="page-link" href="#" aria-label="Previous">
-						<span aria-hidden="true">&laquo;</span>
-					</a>
-					{% endif %}
-				</li>
+<div class="d-flex justify-content-center position-absolute bottom-0 start-50 translate-middle-x">
+	<nav aria-label="Page navigation example">
+		<ul class="pagination">
+			<li class="page-item">
 				{% if page == 0 %}
-					<li class="page-item">
-						<a class="page-link active" href="#" aria-label="Next">
-							<span aria-hidden="true">1</span>
-						</a>
-					</li>
+				<a class="page-link disabled" href="#" aria-label="Previous">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
 				{% else %}
-					<li class="page-item">
-						<a class="page-link" href="#" aria-label="Next">
-							<span aria-hidden="true">1</span>
-						</a>
-					</li>
-					<li class="page-item">
-						<a class="page-link active" href="#" aria-label="Next">
-							<span aria-hidden="true">{{ page + 1 }}</span>
-						</a>
-					</li>
+				<a class="page-link" href="#" aria-label="Previous">
+					<span aria-hidden="true">&laquo;</span>
+				</a>
 				{% endif %}
-				<li class="page-item">
-					<a class="page-link" href="#" aria-label="Next">
-						<span aria-hidden="true">&raquo;</span>
-					</a>
-				</li>
-			</ul>
-		</nav>
-	</div>
+			</li>
+			{% if page == 0 %}
+			<li class="page-item">
+				<a class="page-link active" href="#" aria-label="Next">
+					<span aria-hidden="true">1</span>
+				</a>
+			</li>
+			{% else %}
+			<li class="page-item">
+				<a class="page-link" href="#" aria-label="Next">
+					<span aria-hidden="true">1</span>
+				</a>
+			</li>
+			<li class="page-item">
+				<a class="page-link active" href="#" aria-label="Next">
+					<span aria-hidden="true">{{ page + 1 }}</span>
+				</a>
+			</li>
+			{% endif %}
+			<li class="page-item">
+				<a class="page-link" href="#" aria-label="Next">
+					<span aria-hidden="true">&raquo;</span>
+				</a>
+			</li>
+		</ul>
+	</nav>
+</div>
 {% endblock %}
