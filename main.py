@@ -61,11 +61,12 @@ async def visual_search_front(request: Request) -> Response:
 
 
 @app.route("/results")
-async def results_front(request: Request) -> Response:
+async def results_front(request: Request, page: int = 0) -> Response:
     return templates.TemplateResponse(
         request=request,
         name="results.html",
         context={
+            "page": page,
             "results_1": [
                 {"title": "Ligma", "description": "hallo"},
                 {"title": "Big", "description": "hallo"},
