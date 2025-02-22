@@ -32,10 +32,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+UPLOAD_DIR = "uploads"
+
+# Crear directorio de uploads si no existe
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 # Montar archivos estáticos
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
+app.mount(f"/{UPLOAD_DIR}", StaticFiles(directory=UPLOAD_DIR), name=UPLOAD_DIR)
 # Configurar templates
 templates = Jinja2Templates(directory="templates")
 
@@ -43,11 +48,7 @@ load_dotenv()
 
 INDITEX_SEARCH_API_URL = "https://api.inditex.com/searchpmpa/products"
 INDITEX_VISUAL_SEARCH_API_URL = "https://api.inditex.com/pubvsearch/products"
-UPLOAD_DIR = "uploads"
 DOMAIN = os.getenv("DOMAIN", "http://localhost:8000")
-
-# Crear directorio de uploads si no existe
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 GLOBAL_HEADERS = {
     "Authorization": f"Bearer {os.getenv('ID_TOKEN')}",
@@ -79,7 +80,7 @@ async def results_front(request: Request, page: int = 0) -> Response:
         request=request,
         name="results.html",
         context={
-	    "other": True,
+            "other": True,
             "page": page,
             "results_1": [
                 {"title": "Ligma", "description": "hallo"},
@@ -93,7 +94,6 @@ async def results_front(request: Request, page: int = 0) -> Response:
             ],
         },
     )
-
 
 @app.route("/text")
 async def text_search_front(request: Request) -> Response:
@@ -112,19 +112,24 @@ async def text_search(query: str, page: int = 1, per_page: int = 5):
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            INDITEX_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
-        )
-    
-    logger.info(f"Código de respuesta de la API: {response.status_code}")
-    
-    if response.status_code == 200:
-        logger.info("Búsqueda de texto exitosa")
-        return response.json()
-    else:
-        logger.error(f"Error en la búsqueda de texto: {response.text}")
-        raise HTTPException(status_code=response.status_code, detail=f"Failed to fetch data from Inditex Search API: {response.text}")
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                INDITEX_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
+            )
+        
+        logger.info(f"Código de respuesta de la API: {response.status_code}")
+        
+        if response.status_code == 200:
+            logger.info("Búsqueda de texto exitosa")
+            return response.json()
+        else:
+            logger.error(f"Error en la búsqueda de texto: {response.text}")
+            error_message = f"Failed to fetch data from Inditex Search API: {response.text}"
+            raise HTTPException(status_code=response.status_code, detail=error_message)
+    except httpx.RequestError as exc:
+        logger.error(f"Error de conexión en la búsqueda de texto: {exc}")
+        raise HTTPException(status_code=500, detail=f"Connection error: {exc}")
 
 @app.get("/visual-search")
 async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
@@ -139,19 +144,24 @@ async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            INDITEX_VISUAL_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
-        )
-    
-    logger.info(f"Código de respuesta de la API: {response.status_code}")
-    
-    if response.status_code == 200:
-        logger.info("Búsqueda visual exitosa")
-        return response.json()
-    else:
-        logger.error(f"Error en la búsqueda visual: {response.text}")
-        raise HTTPException(status_code=response.status_code, detail=f"Failed to fetch data from Inditex Visual Search API: {response.text}")
+    try:
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                INDITEX_VISUAL_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
+            )
+        
+        logger.info(f"Código de respuesta de la API: {response.status_code}")
+        
+        if response.status_code == 200:
+            logger.info("Búsqueda visual exitosa")
+            return response.json()
+        else:
+            logger.error(f"Error en la búsqueda visual: {response.text}")
+            error_message = f"Failed to fetch data from Inditex Visual Search API: {response.text}"
+            raise HTTPException(status_code=response.status_code, detail=error_message)
+    except httpx.RequestError as exc:
+        logger.error(f"Error de conexión en la búsqueda visual: {exc}")
+        raise HTTPException(status_code=500, detail=f"Connection error: {exc}")
 
 @app.post("/upload-and-search")
 async def upload_and_search(file: UploadFile = File(...)):
@@ -200,6 +210,12 @@ async def upload_and_search(file: UploadFile = File(...)):
         logger.info(f"Imagen eliminada: {file_path}")
         
         return api_response
+    except httpx.RequestError as exc:
+        logger.error(f"Error de conexión en la carga y búsqueda: {exc}")
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            logger.info(f"Imagen eliminada después de un error: {file_path}")
+        raise HTTPException(status_code=500, detail=f"Connection error: {exc}")
     except Exception as e:
         logger.exception(f"Excepción ocurrida: {str(e)}")
         if os.path.exists(file_path):
