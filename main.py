@@ -29,6 +29,7 @@ import os
 import shutil
 from uuid import uuid4
 from get_key import start_token_refresh
+import json
 
 app = FastAPI()
 
@@ -237,6 +238,33 @@ async def upload_and_search(file: UploadFile = File(...)):
             os.remove(file_path)
             logger.info(f"Imagen eliminada después de un error: {file_path}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+class Clothes3dRepository:
+    _idUrlTable: dict[int, str]
+
+    @staticmethod
+    def getUrlById(id: int) -> dict[str, str]:
+        id = str(id)
+        return (None if id not in Clothes3dRepository._idUrlTable
+            else Clothes3dRepository._idUrlTable[id])
+
+with open("./idClothesMap.json") as io:
+    Clothes3dRepository._idUrlTable = json.load(io)
+
+class Clothes3dService:
+    _repo: Clothes3dRepository = Clothes3dRepository()
+    _defaultId = 0
+    
+    @staticmethod
+    def getUrlById(id: int) ->  dict[str, str]:
+        url = Clothes3dService._repo.getUrlById(id)
+        if not url:
+            url = Clothes3dService._repo.getUrlById(Clothes3dService._defaultId)
+        return url
+
+@app.get("/clothes-3d")
+async def clothes_3d(id: int):
+    return Clothes3dService.getUrlById(id)
 
 if __name__ == "__main__":
     import uvicorn
