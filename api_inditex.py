@@ -1,16 +1,22 @@
+import os
 import requests
+from dotenv import load_dotenv
+
+# Cargar variables desde .env
+load_dotenv()
 
 # Credenciales OAuth2
-client_id = "oauth-mkpsbox-oauthxdnrltwvvzqdrjkdimsnbxpro"
-client_secret = "oI2F24R3uyAZMs_p"
+client_id = os.getenv("OAUTH2_CLIENT")
+client_secret = os.getenv("OAUTH2_SECRET")
+token_url = os.getenv("TOKEN_URL")
+scope = os.getenv("SCOPE")
 
-# URL del token en el entorno sandbox
-token_url = "https://auth.inditex.com:443/openam/oauth2/itxid/itxidmp/sandbox/access_token"
+print("TOKEN_URL:", token_url)
 
 # Parámetros de la solicitud
 data = {
     "grant_type": "client_credentials",
-    "scope": "technology.catalog.read"
+    "scope": scope
 }
 
 # Enviar la solicitud con autenticación básica
@@ -22,4 +28,3 @@ if response.status_code == 200:
     print("Token obtenido:", token_info["access_token"])
 else:
     print("Error:", response.status_code, response.text)
-
