@@ -20,6 +20,10 @@
               python-pkgs.ruff
               python-pkgs.fastapi-cli
               python-pkgs.jinja2
+              python-pkgs.httpx
+              python-pkgs.requests
+              python-pkgs.apscheduler
+              python-pkgs.python-multipart
             ]))
           ];
         };
