@@ -8,22 +8,15 @@ request_url = "https://api-sandbox.inditex.com/pubvsearch-sandbox/products"
 key = os.getenv("ID_TOKEN")
 
 
-#image = "broemia.org/uploads/4f7231d1-d1df-4932-a644-3c95e4595b16.jpg"
-#image = "https://www.markamania.es/1127148-large_default/camiseta-blanca-stanleystella-rocker.jpg"
+# image = "broemia.org/uploads/4f7231d1-d1df-4932-a644-3c95e4595b16.jpg"
+# image = "https://www.markamania.es/1127148-large_default/camiseta-blanca-stanleystella-rocker.jpg"
 image = "https://google.es/foto"
 
-params = {
-    "image": image,
-    "page": 1,
-    "perPage": 5
-}
+params = {"image": image, "page": 1, "perPage": 5}
 
-headers = {
-    "Authorization": f"Bearer {key}",
-    "Content-Type": "application/json"
-}
+headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
-print("h:", headers) 
+print("h:", headers)
 
 # Send request
 response = requests.get(request_url, params=params, headers=headers)

@@ -17,6 +17,7 @@
               python-pkgs.fastapi
               python-pkgs.python-dotenv
               python-pkgs.pydantic
+              python-pkgs.ruff
               python-pkgs.fastapi-cli
               python-pkgs.jinja2
             ]))

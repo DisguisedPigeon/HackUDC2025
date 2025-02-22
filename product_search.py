@@ -9,16 +9,9 @@ key = os.getenv("ID_TOKEN")
 
 text = "shirt"
 
-params = {
-    "query": text,
-    "page": 1,
-    "perPage": 5
-}
+params = {"query": text, "page": 1, "perPage": 5}
 
-headers = {
-    "Authorization": f"Bearer {key}",
-    "Content-Type": "application/json"
-}
+headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
 
 print("h:", headers)
 
