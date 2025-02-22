@@ -33,14 +33,15 @@ def get_token():
         set_key(".env", "ID_TOKEN", token_info["id_token"])
         print("Token obtenido:", token_info["id_token"])
 
-        expires_in = token_info["expires_in"]
+        expires_in_minutes = token_info["expires_in"]
+        expires_in_seconds = expires_in_minutes * 60  # Convertir minutos a segundos
         next_refresh = datetime.now() + timedelta(
-            seconds=expires_in - 300
+            seconds=expires_in_seconds - 300
         )  # 5 minutos antes de que expire
         scheduler.add_job(get_token, "date", run_date=next_refresh)
+        print(f"Próxima actualización programada para: {next_refresh}")
     else:
         print("Error:", response.status_code, response.text)
-
 
 def start_token_refresh():
     scheduler.start()
