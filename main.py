@@ -284,6 +284,7 @@ async def upload_and_search(request: Request, myFile: UploadFile = File(...), pa
             context = generate_context(data)
 
             os.remove(file_path)
+            logger.info(f"Imagen eliminada: {file_path}")
 
             return templates.TemplateResponse(
                 request=request,
