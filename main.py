@@ -37,6 +37,8 @@ DOMAIN = os.getenv("DOMAIN", "http://localhost:8000")  # Usa el dominio del .env
 # Crear directorio de uploads si no existe
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
 class TextSearchRequest(BaseModel):
     query: str
     page: int = 1
@@ -101,8 +103,9 @@ async def upload_and_search(file: UploadFile = File(...)):
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
     
-    # Generar URL pública
-    public_url = f"{DOMAIN}/{UPLOAD_DIR}/{unique_filename}"
+    # Generar URL pública con protocolo https://
+    public_url = f"https://{DOMAIN}/uploads/{unique_filename}"
+    print(f"URL generada: {public_url}")  # Para debugging
     
     # Realizar la búsqueda visual
     headers = {
@@ -115,18 +118,33 @@ async def upload_and_search(file: UploadFile = File(...)):
         "perPage": 10
     }
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(INDITEX_VISUAL_SEARCH_API_URL, params=params, headers=headers)
-    
-    # Eliminar el archivo después de usarlo
-    # os.remove(file_path)
-    print(f"Imagen guardada en: {file_path}")
-    print(f"URL pública: {public_url}")
-    
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise HTTPException(status_code=response.status_code, detail="Failed to fetch data from Inditex Visual Search API")
+    try:
+        # Realizar la búsqueda visual
+        async with httpx.AsyncClient() as client:
+            response = await client.get(INDITEX_VISUAL_SEARCH_API_URL, params=params, headers=headers)
+        
+        print(f"Respuesta de la API: {response.status_code}")
+        print(f"Contenido de la respuesta: {response.text}")
+        
+        # Procesar la respuesta de la API
+        if response.status_code == 200:
+            api_response = response.json()
+        else:
+            api_response = {"error": f"Failed to fetch data from Inditex Visual Search API: {response.text}"}
+        
+        # Eliminar el archivo después de recibir la respuesta de la API
+        os.remove(file_path)
+        print(f"Imagen eliminada: {file_path}")
+        
+        return api_response
+    except Exception as e:
+        # Si ocurre un error, asegúrate de eliminar el archivo de todos modos
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            print(f"Imagen eliminada después de un error: {file_path}")
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+
+
 
 if __name__ == "__main__":
     import uvicorn

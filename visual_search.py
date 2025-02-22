@@ -7,6 +7,8 @@ load_dotenv()
 request_url = "https://api-sandbox.inditex.com/pubvsearch-sandbox/products"
 key = os.getenv("ID_TOKEN")
 
+
+#image = "broemia.org/uploads/4f7231d1-d1df-4932-a644-3c95e4595b16.jpg"
 image = "https://www.markamania.es/1127148-large_default/camiseta-blanca-stanleystella-rocker.jpg"
 
 params = {
