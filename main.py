@@ -25,6 +25,7 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi import Request
 from pydantic import BaseModel, HttpUrl
 import httpx
 from dotenv import load_dotenv
