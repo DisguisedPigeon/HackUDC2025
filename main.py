@@ -3,16 +3,18 @@ import colorlog
 
 # Configurar el logger
 handler = colorlog.StreamHandler()
-handler.setFormatter(colorlog.ColoredFormatter(
-    "%(log_color)s%(levelname)s%(reset)s:     %(message)s",
-    log_colors={
-        'INFO': 'green',  # Solo INFO en verde
-        'DEBUG': 'white', # Se mantiene sin color
-        'WARNING': 'white',
-        'ERROR': 'white',
-        'CRITICAL': 'white'
-    }
-))
+handler.setFormatter(
+    colorlog.ColoredFormatter(
+        "%(log_color)s%(levelname)s%(reset)s:     %(message)s",
+        log_colors={
+            "INFO": "green",  # Solo INFO en verde
+            "DEBUG": "white",  # Se mantiene sin color
+            "WARNING": "white",
+            "ERROR": "white",
+            "CRITICAL": "white",
+        },
+    )
+)
 
 logger = colorlog.getLogger()
 logger.addHandler(handler)
@@ -29,6 +31,7 @@ import os
 import shutil
 from uuid import uuid4
 from get_key import start_token_refresh
+import json
 
 app = FastAPI()
 
@@ -36,7 +39,7 @@ print("Iniciando la aplicación...")
 logger.info("Iniciando la aplicación...")
 
 # Iniciar el mecanismo de recarga de token
-start_token_refresh()
+# start_token_refresh()
 
 # Configurar CORS
 app.add_middleware(
@@ -68,26 +71,30 @@ DOMAIN = os.getenv("DOMAIN", "http://localhost:8000")
 GLOBAL_HEADERS = {
     "Authorization": f"Bearer {os.getenv('ID_TOKEN')}",
     "Content-Type": "application/json",
-    "User-Agent": "HackUDC2025/1.0"
+    "User-Agent": "HackUDC2025/1.0",
 }
 
 logger.info(f"INDITEX_SEARCH_API_URL: {INDITEX_SEARCH_API_URL}")
 logger.info(f"INDITEX_VISUAL_SEARCH_API_URL: {INDITEX_VISUAL_SEARCH_API_URL}")
 logger.info(f"DOMAIN: {DOMAIN}")
 
+
 class TextSearchRequest(BaseModel):
     query: str
     page: int = 1
     per_page: int = 5
+
 
 class VisualSearchRequest(BaseModel):
     image_url: HttpUrl
     page: int = 1
     per_page: int = 5
 
+
 @app.route("/")
 async def visual_search_front(request: Request) -> Response:
     return templates.TemplateResponse(request=request, name="visual.html", context={})
+
 
 @app.route("/results")
 async def results_front(request: Request, page: int = 0) -> Response:
@@ -110,19 +117,19 @@ async def results_front(request: Request, page: int = 0) -> Response:
         },
     )
 
+
 @app.route("/text")
 async def text_search_front(request: Request) -> Response:
     return templates.TemplateResponse(request=request, name="text.html", context={})
 
+
 @app.get("/text-search")
 async def text_search(query: str, page: int = 1, per_page: int = 5):
-    logger.info(f"Iniciando búsqueda de texto con query: {query}, page: {page}, per_page: {per_page}")
-    
-    params = {
-        "query": query,
-        "page": page,
-        "perPage": per_page
-    }
+    logger.info(
+        f"Iniciando búsqueda de texto con query: {query}, page: {page}, per_page: {per_page}"
+    )
+
+    params = {"query": query, "page": page, "perPage": per_page}
 
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
@@ -132,29 +139,30 @@ async def text_search(query: str, page: int = 1, per_page: int = 5):
             response = await client.get(
                 INDITEX_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
             )
-        
+
         logger.info(f"Código de respuesta de la API: {response.status_code}")
-        
+
         if response.status_code == 200:
             logger.info("Búsqueda de texto exitosa")
             return response.json()
         else:
             logger.error(f"Error en la búsqueda de texto: {response.text}")
-            error_message = f"Failed to fetch data from Inditex Search API: {response.text}"
+            error_message = (
+                f"Failed to fetch data from Inditex Search API: {response.text}"
+            )
             raise HTTPException(status_code=response.status_code, detail=error_message)
     except httpx.RequestError as exc:
         logger.error(f"Error de conexión en la búsqueda de texto: {exc}")
         raise HTTPException(status_code=500, detail=f"Connection error: {exc}")
 
+
 @app.get("/visual-search")
 async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
-    logger.info(f"Iniciando búsqueda visual con image_url: {image_url}, page: {page}, per_page: {per_page}")
-    
-    params = {
-        "image": str(image_url),
-        "page": page,
-        "perPage": per_page
-    }
+    logger.info(
+        f"Iniciando búsqueda visual con image_url: {image_url}, page: {page}, per_page: {per_page}"
+    )
+
+    params = {"image": str(image_url), "page": page, "perPage": per_page}
 
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
@@ -164,43 +172,42 @@ async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
             response = await client.get(
                 INDITEX_VISUAL_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
             )
-        
+
         logger.info(f"Código de respuesta de la API: {response.status_code}")
-        
+
         if response.status_code == 200:
             logger.info("Búsqueda visual exitosa")
             return response.json()
         else:
             logger.error(f"Error en la búsqueda visual: {response.text}")
-            error_message = f"Failed to fetch data from Inditex Visual Search API: {response.text}"
+            error_message = (
+                f"Failed to fetch data from Inditex Visual Search API: {response.text}"
+            )
             raise HTTPException(status_code=response.status_code, detail=error_message)
     except httpx.RequestError as exc:
         logger.error(f"Error de conexión en la búsqueda visual: {exc}")
         raise HTTPException(status_code=500, detail=f"Connection error: {exc}")
 
+
 @app.post("/upload-and-search")
 async def upload_and_search(file: UploadFile = File(...)):
     logger.info(f"Iniciando carga y búsqueda con archivo: {file.filename}")
-    
+
     file_extension = os.path.splitext(file.filename)[1]
     unique_filename = f"{uuid4()}{file_extension}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
-    
+
     with open(file_path, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
-    
-    if DOMAIN.startswith(('http://', 'https://')):
+
+    if DOMAIN.startswith(("http://", "https://")):
         public_url = f"{DOMAIN}/uploads/{unique_filename}"
     else:
         public_url = f"https://{DOMAIN}/uploads/{unique_filename}"
-    
+
     logger.info(f"URL generada: {public_url}")
-    
-    params = {
-        "image": public_url,
-        "page": 1,
-        "perPage": 5
-    }
+
+    params = {"image": public_url, "page": 1, "perPage": 5}
 
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
@@ -210,20 +217,22 @@ async def upload_and_search(file: UploadFile = File(...)):
             response = await client.get(
                 INDITEX_VISUAL_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
             )
-        
+
         logger.info(f"Respuesta de la API: {response.status_code}")
         logger.info(f"Contenido de la respuesta: {response.text}")
-        
+
         if response.status_code == 200:
             api_response = response.json()
             logger.info("Búsqueda visual exitosa")
         else:
-            api_response = {"error": f"Failed to fetch data from Inditex Visual Search API: {response.text}"}
+            api_response = {
+                "error": f"Failed to fetch data from Inditex Visual Search API: {response.text}"
+            }
             logger.error(f"Error en la búsqueda visual: {response.text}")
-        
+
         os.remove(file_path)
         logger.info(f"Imagen eliminada: {file_path}")
-        
+
         return api_response
     except httpx.RequestError as exc:
         logger.error(f"Error de conexión en la carga y búsqueda: {exc}")
@@ -238,8 +247,48 @@ async def upload_and_search(file: UploadFile = File(...)):
             logger.info(f"Imagen eliminada después de un error: {file_path}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
+
+class Clothes3dRepository:
+    _idUrlTable: dict[int, str]
+
+    @staticmethod
+    def getUrlById(id: int) -> dict[str, str]:
+        id = str(id)
+        return (
+            None
+            if id not in Clothes3dRepository._idUrlTable
+            else Clothes3dRepository._idUrlTable[id]
+        )
+
+
+with open("./idClothesMap.json") as io:
+    Clothes3dRepository._idUrlTable = json.load(io)
+
+
+class Clothes3dService:
+    _repo: Clothes3dRepository = Clothes3dRepository()
+    _defaultId = 0
+
+    @staticmethod
+    def getUrlById(id: int) -> dict[str, str]:
+        url = Clothes3dService._repo.getUrlById(id)
+        if not url:
+            url = Clothes3dService._repo.getUrlById(Clothes3dService._defaultId)
+        return url
+
+
+@app.get("/clothes-3d")
+async def clothes_3d(id: int):
+    return Clothes3dService.getUrlById(id)
+
+
+"""
+@app.post("/login/")
+async def login(username: Annotated[str, Form()], password: Annotated[str, Form()]):
+    return {"username": username}
+"""
 if __name__ == "__main__":
     import uvicorn
+
     logger.info("Iniciando el servidor...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
