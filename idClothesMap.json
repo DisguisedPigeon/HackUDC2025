@@ -1,4 +1,26 @@
 {
+    "0": [
+        {
+            "mtl": "/static/3d/Supervillian/Supervillian.mtl",
+            "obj": "/static/3d/Supervillian/Supervillian.obj"
+        },
+    ],
+    "1": [
+        {
+            "mtl": "/static/3d/Cable_Knit_Sweater/Cable_Knit_Sweater.mtl",
+            "obj": "/static/3d/Cable_Knit_Sweater/Cable_Knit_Sweater.obj"
+        },
+        {
+            "mtl": "/static/3d/Fisherman_Sweater/Fisherman Sweater.mtl",
+            "obj": "/static/3d/Fisherman_Sweater/Fisherman Sweater.obj"
+        },
+        {
+            "mtl": "/static/3d/Folded_Collar_Sweater/Folded_Collar_Sweater.mtl",
+            "obj": "/static/3d/Folded_Collar_Sweater/Folded_Collar_Sweater.obj"
+        },
+    ]
+
+/*
     "0": {
         "mtl": "/static/3d/Boot_Jeans/Boot_Jeans.mtl",
         "obj": "/static/3d/Boot_Jeans/Boot_Jeans.obj"
@@ -38,5 +60,5 @@
     "9": {
         "mtl": "/static/3d/Zipper_Up_Hoodie/Zipped_Up_Hoodie.mtl",
         "obj": "/static/3d/Zipper_Up_Hoodie/Zipped_Up_Hoodie.obj"
-    }
+    }*/
 }
