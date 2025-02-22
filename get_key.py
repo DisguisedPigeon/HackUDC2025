@@ -9,9 +9,7 @@ load_dotenv()
 
 client_id = os.getenv("OAUTH2_CLIENT")
 client_secret = os.getenv("OAUTH2_SECRET")
-token_url = (
-    "https://auth.inditex.com:443/openam/oauth2/itxid/itxidmp/sandbox/access_token"
-)
+token_url = "https://auth.inditex.com:443/openam/oauth2/itxid/itxidmp/access_token"
 scope = "technology.catalog.read"
 
 print("TOKEN_URL:", token_url)

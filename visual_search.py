@@ -4,17 +4,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-request_url = "https://api-sandbox.inditex.com/pubvsearch-sandbox/products"
+request_url = "https://api.inditex.com/pubvsearch/products"
 key = os.getenv("ID_TOKEN")
 
 
 # image = "broemia.org/uploads/4f7231d1-d1df-4932-a644-3c95e4595b16.jpg"
-# image = "https://www.markamania.es/1127148-large_default/camiseta-blanca-stanleystella-rocker.jpg"
-image = "https://google.es/foto"
-
+#image = "https://www.markamania.es/1127148-large_default/camiseta-blanca-stanleystella-rocker.jpg"
+# image = "https://google.es/foto"
+image = "https://www.soul-barcelona.com/wp-content/uploads/2024/02/milla7970.jpg"
 params = {"image": image, "page": 1, "perPage": 5}
 
-headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
+headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json", "User-Agent": "HackUDC/0.1"}
 
 print("h:", headers)
 

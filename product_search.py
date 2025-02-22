@@ -4,14 +4,14 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-request_url = "https://api-sandbox.inditex.com/searchpmpa-sandbox/products"
+request_url = "https://api.inditex.com/searchpmpa/products"
 key = os.getenv("ID_TOKEN")
 
 text = "shirt"
 
 params = {"query": text, "page": 1, "perPage": 5}
 
-headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json"}
+headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json", "User-Agent": "HackUDC/0.1"}
 
 print("h:", headers)
 
