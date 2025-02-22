@@ -26,6 +26,7 @@
               python-pkgs.requests
               python-pkgs.apscheduler
               python-pkgs.python-multipart
+              python-pkgs.colorlog
             ]))
             pkgs.vscode-langservers-extracted
             pkgs.nil

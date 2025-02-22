@@ -1,12 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<style>
+@media (max-width: 576px) { /* Bootstrap's sm breakpoint */
+    #exampleModal .modal-dialog {
+        width: 100vw !important;
+        height: 100vh !important;
+    }
+}
+</style>
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-xl modal-fullscreen-sm-down">
+	<div class="modal-dialog modal-fullscreen-sm-down" style="width: 50vw; height: 50vh; max-width: none;">
 		<div class="modal-content">
-			<div class="modal-body">
+			<div class="modal-title">
 				<button type="button" class="btn-close mb-1" data-bs-dismiss="modal"
 					aria-label="Close"></button>
+				</div >
+			<div class="modal-body d-flex justify-content-center">
 
 				<div id="placeholder">
 					<!-- The canvas will be injected here by Three.js -->
@@ -24,10 +34,10 @@
 					import * as THREE from 'three';
 					
 					const scene = new THREE.Scene();
-					const camera = new THREE.PerspectiveCamera( 75, 1100/450, 0.1, 1000 );
+					const camera = new THREE.PerspectiveCamera( 75, ((window.innerWidth / 3))/ ((window.innerHeight / 2)), 0.1, 1000 );
 					
 					const renderer = new THREE.WebGLRenderer();
-					renderer.setSize( 1100, 450 );
+					renderer.setSize( (window.innerWidth / 3), (window.innerHeight / 2) );
 					
 					// Append renderer's canvas to the placeholder div
 					document.getElementById('placeholder').appendChild(renderer.domElement);
@@ -43,6 +53,9 @@
 						cube.rotation.x += 0.01;
 						cube.rotation.y += 0.01;
 					
+						camera.aspect = ((window.innerWidth / 3) ) / ((window.innerHeight / 2) )
+						camera.updateProjectionMatrix()
+						renderer.setSize( (window.innerWidth / 3) , (window.innerHeight / 2));
 						renderer.render( scene, camera );
 					}
 
