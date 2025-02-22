@@ -131,7 +131,7 @@ async def results_front(request: Request, user_input: str = Form(...), page_numb
     print(f"Iniciando búsqueda visual con image_url: {user_input}, page: {page_number}, per_page: {product_number}")
     logger.info(f"Iniciando búsqueda visual con image_url: {user_input}, page: {page_number}, per_page: {product_number}")
     params = {
-        "image": user_input,
+        "query": user_input,
         "page": page_number,
         "perPage": product_number
     }
@@ -143,7 +143,7 @@ async def results_front(request: Request, user_input: str = Form(...), page_numb
 
     async with httpx.AsyncClient() as client:
         response = await client.get(
-            INDITEX_VISUAL_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
+            INDITEX_SEARCH_API_URL, params=params, headers=GLOBAL_HEADERS
         )
     
     print(f"Código de respuesta de la API: {response.status_code}")
@@ -151,8 +151,8 @@ async def results_front(request: Request, user_input: str = Form(...), page_numb
     
         
     if response.status_code == 200:
-        print("Búsqueda visual exitosa")
-        logger.info("Búsqueda visual exitosa")
+        print("Búsqueda textual exitosa")
+        logger.info("Búsqueda textual exitosa")
         data = response.json()
         context = generate_context(data)
                     
@@ -242,7 +242,7 @@ async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
 
 
 @app.post("/upload-and-search")
-async def upload_and_search(myFile: UploadFile = File(...), page_number: str = Form(...), product_number: str = Form(...)):
+async def upload_and_search(request: Request, myFile: UploadFile = File(...), page_number: str = Form(...), product_number: str = Form(...)):
     logger.info(f"Iniciando carga y búsqueda con archivo: {myFile.filename}")
     
     file_extension = os.path.splitext(myFile.filename)[1]
@@ -261,8 +261,8 @@ async def upload_and_search(myFile: UploadFile = File(...), page_number: str = F
 
     params = {
         "image": public_url,
-        "page": page_number,
-        "perPage": product_number
+        "page": int(page_number),
+        "perPage": int(product_number)
     }
 
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
@@ -284,7 +284,7 @@ async def upload_and_search(myFile: UploadFile = File(...), page_number: str = F
             context = generate_context(data)
 
             return templates.TemplateResponse(
-                request=results_front,
+                request=request,
                 name="results.html",
                 context=context,
             )
