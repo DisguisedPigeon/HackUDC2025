@@ -25,7 +25,6 @@ from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import Request
 from pydantic import BaseModel, HttpUrl
 import httpx
 from dotenv import load_dotenv
@@ -285,7 +284,7 @@ async def upload_and_search(myFile: UploadFile = File(...), page_number: str = F
             context = generate_context(data)
 
             return templates.TemplateResponse(
-                request=request,
+                request=results_front,
                 name="results.html",
                 context=context,
             )
