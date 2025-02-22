@@ -1,125 +1,107 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<style>
-@media (max-width: 576px) { /* Bootstrap's sm breakpoint */
-    #exampleModal .modal-dialog {
-        width: 100vw !important;
-        height: 100vh !important;
-    }
-}
-</style>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8 text-center">Search Results</h1>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {% for item in results_1 %}
+        <div class="bg-white shadow rounded-lg p-4">
+            <h2 class="text-xl font-semibold mb-2">{{ item.name }}</h2>
+            <p class="text-gray-600">{{ item.price }}</p>
+            <p class="text-gray-600">{{ item.oprice }}</p>
+            <p class="text-gray-600">{{ item.link }}</p>
+            <p class="text-gray-600">{{ item.brand }}</p>
+            <button type="button" class="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                Preview
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-8 flex justify-center">
+        <nav aria-label="Page navigation">
+            <ul class="flex space-x-2">
+                <li>
+                    {% if page == 0 %}
+                    <span class="px-3 py-2 bg-gray-200 text-gray-600 rounded">&laquo;</span>
+                    {% else %}
+                    <a href="#" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">&laquo;</a>
+                    {% endif %}
+                </li>
+                {% if page == 0 %}
+                <li>
+                    <span class="px-3 py-2 bg-blue-500 text-white rounded">1</span>
+                </li>
+                {% else %}
+                <li>
+                    <a href="#" class="px-3 py-2 bg-gray-200 text-gray-600 rounded hover:bg-gray-300">1</a>
+                </li>
+                <li>
+                    <span class="px-3 py-2 bg-blue-500 text-white rounded">{{ page + 1 }}</span>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="#" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">&raquo;</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-fullscreen-sm-down" style="width: 50vw; height: 50vh; max-width: none;">
-		<div class="modal-content">
-			<div class="modal-title">
-				<button type="button" class="btn-close mb-1" data-bs-dismiss="modal"
-					aria-label="Close"></button>
-				</div >
-			<div class="modal-body d-flex justify-content-center">
-
-				<div id="placeholder">
-					<!-- The canvas will be injected here by Three.js -->
-				</div>
-	
-				<script type="importmap">
-					{
-						"imports": {
-							"three": "https://cdn.jsdelivr.net/npm/three@0.173.0/build/three.module.js",
-							"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.173.0/examples/jsm/"
-						}
-					}
-				</script>
-				<script type="module">
-					import * as THREE from 'three';
-					
-					const scene = new THREE.Scene();
-					const camera = new THREE.PerspectiveCamera( 75, ((window.innerWidth / 3))/ ((window.innerHeight / 2)), 0.1, 1000 );
-					
-					const renderer = new THREE.WebGLRenderer();
-					renderer.setSize( (window.innerWidth / 3), (window.innerHeight / 2) );
-					
-					// Append renderer's canvas to the placeholder div
-					document.getElementById('placeholder').appendChild(renderer.domElement);
-
-					const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-					const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-					const cube = new THREE.Mesh( geometry, material );
-					scene.add( cube );
-					
-					camera.position.z = 5;
-					
-					function animate() {
-						cube.rotation.x += 0.01;
-						cube.rotation.y += 0.01;
-					
-						camera.aspect = ((window.innerWidth / 3) ) / ((window.innerHeight / 2) )
-						camera.updateProjectionMatrix()
-						renderer.setSize( (window.innerWidth / 3) , (window.innerHeight / 2));
-						renderer.render( scene, camera );
-					}
-
-					// Set the animation loop
-					renderer.setAnimationLoop( animate );
-				</script>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog modal-fullscreen-sm-down" style="width: 50vw; height: 50vh; max-width: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body d-flex justify-content-center">
+                <div id="placeholder">
+                    <!-- The canvas will be injected here by Three.js -->
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<div class="d-flex justify-content-center align-items-center" style="height: calc(100vh - 56px);">
-	<div class="container text-center">
-		{% block row %}
-		{% set results = results_1 %}
-		{% include 'results_list.html' %}
-		{% endblock %}
+<script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.173.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.173.0/examples/jsm/"
+        }
+    }
+</script>
+<script type="module">
+    import * as THREE from 'three';
+    
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera( 75, ((window.innerWidth / 3))/ ((window.innerHeight / 2)), 0.1, 1000 );
+    
+    const renderer = new THREE.WebGLRenderer();
+    renderer.setSize( (window.innerWidth / 3), (window.innerHeight / 2) );
+    
+    // Append renderer's canvas to the placeholder div
+    document.getElementById('placeholder').appendChild(renderer.domElement);
 
-		{% block row2%}
-		{% set results = results_2 %}
-		{% include 'results_list.html' %}
-		{% endblock %}
-	</div>
-</div>
+    const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+    const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+    const cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
+    
+    camera.position.z = 5;
+    
+    function animate() {
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+    
+        camera.aspect = ((window.innerWidth / 3) ) / ((window.innerHeight / 2) )
+        camera.updateProjectionMatrix()
+        renderer.setSize( (window.innerWidth / 3) , (window.innerHeight / 2));
+        renderer.render( scene, camera );
+    }
 
-<div class="d-flex justify-content-center position-absolute bottom-0 start-50 translate-middle-x">
-	<nav aria-label="Page navigation example">
-		<ul class="pagination">
-			<li class="page-item">
-				{% if page == 0 %}
-				<a class="page-link disabled" href="#" aria-label="Previous">
-					<span aria-hidden="true">&laquo;</span>
-				</a>
-				{% else %}
-				<a class="page-link" href="#" aria-label="Previous">
-					<span aria-hidden="true">&laquo;</span>
-				</a>
-				{% endif %}
-			</li>
-			{% if page == 0 %}
-			<li class="page-item">
-				<a class="page-link active" href="#" aria-label="Next">
-					<span aria-hidden="true">1</span>
-				</a>
-			</li>
-			{% else %}
-			<li class="page-item">
-				<a class="page-link" href="#" aria-label="Next">
-					<span aria-hidden="true">1</span>
-				</a>
-			</li>
-			<li class="page-item">
-				<a class="page-link active" href="#" aria-label="Next">
-					<span aria-hidden="true">{{ page + 1 }}</span>
-				</a>
-			</li>
-			{% endif %}
-			<li class="page-item">
-				<a class="page-link" href="#" aria-label="Next">
-					<span aria-hidden="true">&raquo;</span>
-				</a>
-			</li>
-		</ul>
-	</nav>
-</div>
-{% endblock %}
-
+    // Set the animation loop
+    renderer.setAnimationLoop( animate );
+</script>
+{% endblock %}	
