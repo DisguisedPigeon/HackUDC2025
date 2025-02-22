@@ -54,16 +54,16 @@ class VisualSearchRequest(BaseModel):
 async def root(request: Request):
     return templates.TemplateResponse("hello.html", {"request": request})
 
-@app.post("/text-search")
-async def text_search(search_request: TextSearchRequest):
+@app.get("/text-search")
+async def text_search(query: str, page: int = 1, per_page: int = 5):
     headers = {
         "Authorization": f"Bearer {os.getenv('ID_TOKEN')}",
         "Content-Type": "application/json"
     }
     params = {
-        "query": search_request.query,
-        "page": search_request.page,
-        "perPage": search_request.per_page
+        "query": query,
+        "page": page,
+        "perPage": per_page
     }
 
     async with httpx.AsyncClient() as client:
@@ -74,16 +74,16 @@ async def text_search(search_request: TextSearchRequest):
     else:
         raise HTTPException(status_code=response.status_code, detail="Failed to fetch data from Inditex Search API")
 
-@app.post("/visual-search")
-async def visual_search(search_request: VisualSearchRequest):
+@app.get("/visual-search")
+async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
     headers = {
         "Authorization": f"Bearer {os.getenv('ID_TOKEN')}",
         "Content-Type": "application/json"
     }
     params = {
-        "image": str(search_request.image_url),
-        "page": search_request.page,
-        "perPage": search_request.per_page
+        "image": str(image_url),
+        "page": page,
+        "perPage": per_page
     }
 
     async with httpx.AsyncClient() as client:
