@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, File, UploadFile
+from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -71,9 +71,35 @@ class VisualSearchRequest(BaseModel):
     page: int = 1
     per_page: int = 5
 
-@app.get("/")
-async def root(request: Request):
-    return templates.TemplateResponse("hello.html", {"request": request})
+@app.route("/")
+async def visual_search_front(request: Request) -> Response:
+    return templates.TemplateResponse(request=request, name="visual.html", context={})
+
+@app.route("/results")
+async def results_front(request: Request, page: int = 0) -> Response:
+    return templates.TemplateResponse(
+        request=request,
+        name="results.html",
+        context={
+	    "other": True,
+            "page": page,
+            "results_1": [
+                {"title": "Ligma", "description": "hallo"},
+                {"title": "Big", "description": "hallo"},
+                {"title": "Ballz", "description": "hallo"},
+            ],
+            "results_2": [
+                {"title": "Sugon", "description": "hallo"},
+                {"title": "Deez", "description": "hallo"},
+                {"title": "Nutz", "description": "hallo"},
+            ],
+        },
+    )
+
+
+@app.route("/text")
+async def text_search_front(request: Request) -> Response:
+    return templates.TemplateResponse(request=request, name="text.html", context={})
 
 @app.get("/text-search")
 async def text_search(query: str, page: int = 1, per_page: int = 5):

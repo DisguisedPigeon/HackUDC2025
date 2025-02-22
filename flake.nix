@@ -1,4 +1,6 @@
 {
+  description = "Development environment for PMEC";
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     systems.url = "github:nix-systems/default";
@@ -25,6 +27,9 @@
               python-pkgs.apscheduler
               python-pkgs.python-multipart
             ]))
+            pkgs.vscode-langservers-extracted
+            pkgs.nil
+            pkgs.nixd
           ];
         };
       });
