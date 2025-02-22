@@ -41,6 +41,12 @@ Activamos el entorno virtual (Linux/macOS):
 source venv/bin/activate
 ```
 
+Actualizar el pip:
+
+```bash
+pip install --upgrade pip setuptools
+```
+
 Instalamos las dependencias:
 
 ```bash
