@@ -4,13 +4,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-request_url = "https://api-sandbox.inditex.com/pubvsearch-sandbox/products"
+request_url = "https://api-sandbox.inditex.com/searchpmpa-sandbox/products"
 key = os.getenv("ID_TOKEN")
 
-image = "https://www.markamania.es/1127148-large_default/camiseta-blanca-stanleystella-rocker.jpg"
+text = "shirt"
 
 params = {
-    "image": image,
+    "query": text,
     "page": 1,
     "perPage": 5
 }
@@ -20,7 +20,7 @@ headers = {
     "Content-Type": "application/json"
 }
 
-print("h:", headers) 
+print("h:", headers)
 
 # Send request
 response = requests.get(request_url, params=params, headers=headers)
