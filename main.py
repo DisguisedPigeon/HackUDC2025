@@ -7,8 +7,8 @@ handler.setFormatter(
     colorlog.ColoredFormatter(
         "%(log_color)s%(levelname)s%(reset)s:     %(message)s",
         log_colors={
-            "INFO": "green",  # Solo INFO en verde
-            "DEBUG": "white",  # Se mantiene sin color
+            "INFO": "green",
+            "DEBUG": "white",
             "WARNING": "white",
             "ERROR": "white",
             "CRITICAL": "white",
