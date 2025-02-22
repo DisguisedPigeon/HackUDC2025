@@ -56,8 +56,13 @@ class VisualSearchRequest(BaseModel):
 
 
 @app.route("/")
-def root(request: Request) -> Response:
-    return templates.TemplateResponse(request=request, name="frontend.html", context={})
+async def visual_search_front(request: Request) -> Response:
+    return templates.TemplateResponse(request=request, name="visual.html", context={})
+
+
+@app.route("/text")
+async def text_search_front(request: Request) -> Response:
+    return templates.TemplateResponse(request=request, name="text.html", context={})
 
 
 @app.get("/text-search")
