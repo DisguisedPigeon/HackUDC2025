@@ -2,11 +2,53 @@
 
 {% block content %}
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
+	<div class="modal-dialog modal-xl modal-fullscreen-sm-down">
 		<div class="modal-content">
 			<div class="modal-body">
-				<button type="button" class="btn-close" data-bs-dismiss="modal"
+				<button type="button" class="btn-close mb-1" data-bs-dismiss="modal"
 					aria-label="Close"></button>
+
+				<div id="placeholder">
+					<!-- The canvas will be injected here by Three.js -->
+				</div>
+
+				<script type="importmap">
+					{
+						"imports": {
+							"three": "https://cdn.jsdelivr.net/npm/three@0.173.0/build/three.module.js",
+							"three/addons/": "https://cdn.jsdelivr.net/npm/three@0.173.0/examples/jsm/"
+						}
+					}
+				</script>
+				<script type="module">
+					import * as THREE from 'three';
+					
+					const scene = new THREE.Scene();
+					const camera = new THREE.PerspectiveCamera( 75, 1100/450, 0.1, 1000 );
+					
+					const renderer = new THREE.WebGLRenderer();
+					renderer.setSize( 1100, 450 );
+					
+					// Append renderer's canvas to the placeholder div
+					document.getElementById('placeholder').appendChild(renderer.domElement);
+
+					const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+					const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+					const cube = new THREE.Mesh( geometry, material );
+					scene.add( cube );
+					
+					camera.position.z = 5;
+					
+					function animate() {
+						cube.rotation.x += 0.01;
+						cube.rotation.y += 0.01;
+					
+						renderer.render( scene, camera );
+					}
+
+					// Set the animation loop
+					renderer.setAnimationLoop( animate );
+				</script>
 			</div>
 		</div>
 	</div>
@@ -67,3 +109,4 @@
 	</nav>
 </div>
 {% endblock %}
+
