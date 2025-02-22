@@ -32,7 +32,7 @@ El objetivo es crear una aplicación web o móvil que integre la [API de Visual 
 Creamos el entorno virtual de python:
 
 ```bash
-python -m venv venv
+python3 -m venv venv
 ```
 
 Activamos el entorno virtual (Linux/macOS):
