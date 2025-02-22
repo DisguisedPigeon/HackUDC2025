@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Response
+from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Response, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -59,13 +59,13 @@ class VisualSearchRequest(BaseModel):
 async def visual_search_front(request: Request) -> Response:
     return templates.TemplateResponse(request=request, name="visual.html", context={})
 
-
 @app.route("/results")
 async def results_front(request: Request, page: int = 0) -> Response:
     return templates.TemplateResponse(
         request=request,
         name="results.html",
         context={
+	    "other": True,
             "page": page,
             "results_1": [
                 {"title": "Ligma", "description": "hallo"},
@@ -179,7 +179,11 @@ async def upload_and_search(file: UploadFile = File(...)):
             print(f"Imagen eliminada después de un error: {file_path}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
-
+'''
+@app.post("/login/")
+async def login(username: Annotated[str, Form()], password: Annotated[str, Form()]):
+    return {"username": username}
+'''
 if __name__ == "__main__":
     import uvicorn
 
