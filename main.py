@@ -250,7 +250,7 @@ async def upload_and_search(myFile: UploadFile = File(...), page_number: str = F
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
 
     with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+        shutil.copyfileobj(myFile.file, buffer)
 
     if DOMAIN.startswith(("http://", "https://")):
         public_url = f"{DOMAIN}/uploads/{unique_filename}"
