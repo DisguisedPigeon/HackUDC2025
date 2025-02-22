@@ -46,6 +46,9 @@ INDITEX_VISUAL_SEARCH_API_URL = "https://api.inditex.com/pubvsearch/products"
 UPLOAD_DIR = "uploads"
 DOMAIN = os.getenv("DOMAIN", "http://localhost:8000")
 
+# Crear directorio de uploads si no existe
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+
 GLOBAL_HEADERS = {
     "Authorization": f"Bearer {os.getenv('ID_TOKEN')}",
     "Content-Type": "application/json",
@@ -55,9 +58,6 @@ GLOBAL_HEADERS = {
 logger.info(f"INDITEX_SEARCH_API_URL: {INDITEX_SEARCH_API_URL}")
 logger.info(f"INDITEX_VISUAL_SEARCH_API_URL: {INDITEX_VISUAL_SEARCH_API_URL}")
 logger.info(f"DOMAIN: {DOMAIN}")
-
-# Crear directorio de uploads si no existe
-os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 class TextSearchRequest(BaseModel):
     query: str
