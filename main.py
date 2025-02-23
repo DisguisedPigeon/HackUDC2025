@@ -53,8 +53,10 @@ logger.info(f"TOKEN_URL: {token_url}")
 
 scheduler = BackgroundScheduler()
 
+
 def truncate_token(token):
     return token[:10] + "..."
+
 
 def get_token():
     data = {"grant_type": "client_credentials", "scope": scope}
@@ -73,20 +75,28 @@ def get_token():
 
         truncated_token = truncate_token(token_info["id_token"])
         logger.info(f"Token obtenido: {truncated_token}")
-        
+
         expires_in_seconds = token_info["expires_in"]
         expiration_time = datetime.now() + timedelta(seconds=expires_in_seconds)
-        logger.info(f"El token expira en: {expires_in_seconds} segundos (a las {expiration_time.strftime('%Y-%m-%d %H:%M:%S')})")
+        logger.info(
+            f"El token expira en: {expires_in_seconds} segundos (a las {expiration_time.strftime('%Y-%m-%d %H:%M:%S')})"
+        )
 
-        next_refresh = datetime.now() + timedelta(seconds=expires_in_seconds - 300)  # 5 minutos antes de que expire
+        next_refresh = datetime.now() + timedelta(
+            seconds=expires_in_seconds - 300
+        )  # 5 minutos antes de que expire
         scheduler.add_job(get_token, "date", run_date=next_refresh)
-        logger.info(f"Próxima actualización programada para: {next_refresh.strftime('%Y-%m-%d %H:%M:%S')}")
+        logger.info(
+            f"Próxima actualización programada para: {next_refresh.strftime('%Y-%m-%d %H:%M:%S')}"
+        )
     else:
         logger.error(f" {response.status_code} {response.text}")
+
 
 def start_token_refresh():
     scheduler.start()
     get_token()
+
 
 # Start token refresh mechanism
 start_token_refresh()
@@ -126,15 +136,18 @@ logger.info(f"INDITEX_SEARCH_API_URL: {INDITEX_SEARCH_API_URL}")
 logger.info(f"INDITEX_VISUAL_SEARCH_API_URL: {INDITEX_VISUAL_SEARCH_API_URL}")
 logger.info(f"DOMAIN: {DOMAIN}")
 
+
 class TextSearchRequest(BaseModel):
     query: str
     page: int = 1
     per_page: int = 5
 
+
 class VisualSearchRequest(BaseModel):
     image_url: HttpUrl
     page: int = 1
     per_page: int = 5
+
 
 def generate_context(data):
     context = {}
@@ -163,12 +176,14 @@ def generate_context(data):
             }
         )
     context["results_1"] = datas
-    
+
     return context
+
 
 @app.route("/")
 async def visual_search_front(request: Request):
     return templates.TemplateResponse(request=request, name="visual.html", context={})
+
 
 @app.post("/results")
 async def results_front(
@@ -209,11 +224,13 @@ async def results_front(
             detail=f"Failed to fetch data from Inditex Visual Search API: {response.text}",
         )
 
+
 @app.route("/text", methods=("GET", "POST"))
 async def text_search_front(request: Request):
     if request.method == "POST":
         return redirect(url_for("results"))
     return templates.TemplateResponse(request=request, name="text.html", context={})
+
 
 @app.get("/text-search")
 async def text_search(query: str, page: int = 1, per_page: int = 5):
@@ -247,6 +264,7 @@ async def text_search(query: str, page: int = 1, per_page: int = 5):
         logger.error(f"Error de conexión en la búsqueda de texto: {exc}")
         raise HTTPException(status_code=500, detail=f"Connection error: {exc}")
 
+
 @app.get("/visual-search")
 async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
     logger.info(
@@ -278,6 +296,7 @@ async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
     except httpx.RequestError as exc:
         logger.error(f"Error de conexión en la búsqueda visual: {exc}")
         raise HTTPException(status_code=500, detail=f"Connection error: {exc}")
+
 
 @app.post("/upload-and-search")
 async def upload_and_search(
@@ -357,6 +376,7 @@ async def upload_and_search(
             logger.info(f"Imagen eliminada después de un error: {file_path}")
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
+
 class Clothes3dRepository:
     _classIdUrlsTable: dict[str, list[str, str]]
     _nameClassIdTable: dict[str, int]
@@ -382,16 +402,19 @@ class Clothes3dRepository:
             else Clothes3dRepository._nameClassIdTable[name]
         )
 
+
 with open("./idClothesMap.json") as io:
     Clothes3dRepository._classIdUrlsTable = json.load(io)
 
 with open("./nameClassId.json") as io:
     Clothes3dRepository._nameClassIdTable = json.load(io)
 
+
 def extraer_palabra(cadena, lista_palabras):
     patron = r"\b(" + "|".join(map(re.escape, lista_palabras)) + r")\b"
     coincidencia = re.search(patron, cadena, re.IGNORECASE)
     return coincidencia.group(0) if coincidencia else None
+
 
 class Clothes3dService:
     _repo: Clothes3dRepository = Clothes3dRepository()
@@ -409,14 +432,15 @@ class Clothes3dService:
         print(h.hexdigest())
         return [] if not urls else urls[int.from_bytes(h.digest(), "big") % len(urls)]
 
+
 @app.get("/clothes-3d")
 async def clothes_3d(product_name: str):
     return Clothes3dService.getUrlByProductName(product_name)
 
+
+app.mount("/", StaticFiles(directory="favicon"), name="favicon")
 if __name__ == "__main__":
     import uvicorn
 
     logger.info("Iniciando el servidor...")
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
-
