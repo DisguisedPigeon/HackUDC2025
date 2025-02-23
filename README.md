@@ -25,7 +25,7 @@ El objetivo es crear una aplicación web o móvil que integre la [API de Visual 
 * Calidad y claridad del código fuente.
 
 ## TODO
-- [ ] Visualizacion de prendas en WebGL
+- [x] Visualizacion de prendas en WebGL
 
 ## VirtualEnv
 
