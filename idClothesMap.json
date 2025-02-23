@@ -3,7 +3,7 @@
         {
             "mtl": "/static/3d/Supervillian/Supervillian.mtl",
             "obj": "/static/3d/Supervillian/Supervillian.obj"
-        },
+        }
     ],
     "1": [
         {
@@ -18,47 +18,36 @@
             "mtl": "/static/3d/Folded_Collar_Sweater/Folded_Collar_Sweater.mtl",
             "obj": "/static/3d/Folded_Collar_Sweater/Folded_Collar_Sweater.obj"
         },
+	{
+            "mtl": "/static/3d/Denim_Button_Up/Denim_Button_Up.mtl",
+            "obj": "/static/3d/Denim_Button_Up/Denim_Button_Up.obj"
+        },
+	{
+            "mtl": "/static/3d/Zipper_Hoodie/Zipper_Hoodie.mtl",
+            "obj": "/static/3d/Zipper_Hoodie/Zipper_Hoodie.obj"
+	},
+	{
+            "mtl": "/static/3d/Zipper_Up_Hoodie/Zipped_Up_Hoodie.mtl",
+            "obj": "/static/3d/Zipper_Up_Hoodie/Zipped_Up_Hoodie.obj"
+	}
+    ],
+    "2": [
+	{
+            "mtl": "/static/3d/Puffy_Cap/Puffy_Cap.mtl",
+            "obj": "/static/3d/Puffy_Cap/Puffy_Cap.obj"
+	}
+    ],
+    "3": [
+	{
+            "mtl": "/static/3d/Boot_Jeans/Boot_Jeans.mtl",
+            "obj": "/static/3d/Boot_Jeans/Boot_Jeans.obj"
+	}
+    ],
+    "4": [
+	{
+            "mtl": "/static/3d/Tiered_Wedding_Dress/Tiered_Wedding_Dress.mtl",
+            "obj": "/static/3d/Tiered_Wedding_Dress/Tiered_Wedding_Dress.obj"
+	}
     ]
-
-/*
-    "0": {
-        "mtl": "/static/3d/Boot_Jeans/Boot_Jeans.mtl",
-        "obj": "/static/3d/Boot_Jeans/Boot_Jeans.obj"
-    },
-    "1": {
-        "mtl": "/static/3d/Cable_Knit_Sweater/Cable_Knit_Sweater.mtl",
-        "obj": "/static/3d/Cable_Knit_Sweater/Cable_Knit_Sweater.obj"
-    },
-    "2": {
-        "mtl": "/static/3d/Denim_Button_Up/Denim_Button_Up.mtl",
-        "obj": "/static/3d/Denim_Button_Up/Denim_Button_Up.obj"
-    },
-    "3": {
-        "mtl": "/static/3d/Fisherman_Sweater/Fisherman Sweater.mtl",
-        "obj": "/static/3d/Fisherman_Sweater/Fisherman Sweater.obj"
-    },
-    "4": {
-        "mtl": "/static/3d/Folded_Collar_Sweater/Folded_Collar_Sweater.mtl",
-        "obj": "/static/3d/Folded_Collar_Sweater/Folded_Collar_Sweater.obj"
-    },
-    "5": {
-        "mtl": "/static/3d/Puffy_Cap/Puffy_Cap.mtl",
-        "obj": "/static/3d/Puffy_Cap/Puffy_Cap.obj"
-    },
-    "6": {
-        "mtl": "/static/3d/Supervillian/Supervillian.mtl",
-        "obj": "/static/3d/Supervillian/Supervillian.obj"
-    },
-    "7": {
-        "mtl": "/static/3d/Tiered_Wedding_Dress/Tiered_Wedding_Dress.mtl",
-        "obj": "/static/3d/Tiered_Wedding_Dress/Tiered_Wedding_Dress.obj"
-    },
-    "8": {
-        "mtl": "/static/3d/Zipper_Hoodie/Zipper_Hoodie.mtl",
-        "obj": "/static/3d/Zipper_Hoodie/Zipper_Hoodie.obj"
-    },
-    "9": {
-        "mtl": "/static/3d/Zipper_Up_Hoodie/Zipped_Up_Hoodie.mtl",
-        "obj": "/static/3d/Zipper_Up_Hoodie/Zipped_Up_Hoodie.obj"
-    }*/
 }
+
