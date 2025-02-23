@@ -33,6 +33,8 @@ import shutil
 from uuid import uuid4
 from get_key import start_token_refresh
 import json
+import re
+import hashlib
 
 app = FastAPI()
 
@@ -317,37 +319,64 @@ async def upload_and_search(request: Request, myFile: UploadFile = File(...), pa
 
 
 class Clothes3dRepository:
-    _idUrlTable: dict[int, str]
+    _classIdUrlsTable: dict[str, list[str, str]]
+    _nameClassIdTable: dict[str, int]
 
     @staticmethod
-    def getUrlById(id: int) -> dict[str, str]:
-        id = str(id)
+    def getUrlsByClassId(classId: int) -> list[dict[str, str]]:
+        classId = str(classId)
         return (
-            None
-            if id not in Clothes3dRepository._idUrlTable
-            else Clothes3dRepository._idUrlTable[id]
+            []
+            if classId not in Clothes3dRepository._classIdUrlsTable
+            else Clothes3dRepository._classIdUrlsTable[classId]
         )
+
+    @staticmethod
+    def getNameAllClass() -> list[int]:
+        return Clothes3dRepository._nameClassIdTable.keys()
+
+    @staticmethod
+    def getNameClassId(name: str) -> int:
+        return (None if name not in Clothes3dRepository._nameClassIdTable
+            else Clothes3dRepository._nameClassIdTable[name])
 
 
 with open("./idClothesMap.json") as io:
-    Clothes3dRepository._idUrlTable = json.load(io)
+    Clothes3dRepository._classIdUrlsTable = json.load(io)
 
+with open("./nameClassId.json") as io:
+    Clothes3dRepository._nameClassIdTable = json.load(io)
+
+def extraer_palabra(cadena, lista_palabras):
+    # Crear una expresión regular que busque cualquiera de las palabras en la lista
+    patron = r'\b(' + '|'.join(map(re.escape, lista_palabras)) + r')\b'
+    # Buscar coincidencias en la cadena
+    coincidencia = re.search(patron, cadena, re.IGNORECASE)
+    # Retornar la palabra encontrada o None si no hay coincidencia
+    return coincidencia.group(0) if coincidencia else None
 
 class Clothes3dService:
     _repo: Clothes3dRepository = Clothes3dRepository()
     _defaultId = 0
 
     @staticmethod
-    def getUrlById(id: int) -> dict[str, str]:
-        url = Clothes3dService._repo.getUrlById(id)
-        if not url:
-            url = Clothes3dService._repo.getUrlById(Clothes3dService._defaultId)
-        return url
+    def getUrlByProductName(product_name: str) -> dict[str, str]:
+        classes = Clothes3dService._repo.getNameAllClass()
+        className = extraer_palabra(product_name, classes)
+        classId = Clothes3dService._repo.getNameClassId(className)
+
+        # Take allways the same option between clothes of the same class
+        urls = Clothes3dService._repo.getUrlsByClassId(classId)
+        h = hashlib.new('sha256')
+        h.update(product_name.encode())
+        print(h.hexdigest())
+        return ([] if not urls
+            else urls[int.from_bytes(h.digest(), "big") % len(urls)])
 
 
 @app.get("/clothes-3d")
-async def clothes_3d(id: int):
-    return Clothes3dService.getUrlById(id)
+async def clothes_3d(product_name: str):
+    return Clothes3dService.getUrlByProductName(product_name)
 
 
 """
