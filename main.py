@@ -141,8 +141,6 @@ def generate_context(data):
     context["other"] = True
     context["page"] = 0  # page
     symbol = {"EUR": "€"}
-    cont = 1
-    cnt = 1
     limits = len(data)
     datas = []
     for item in data:
@@ -164,14 +162,8 @@ def generate_context(data):
                 "brand": "Brand: " + item["brand"],
             }
         )
-        cnt += 1
-        # We collect data in batches of 3 elements
-        if cnt % 3 == 0:
-            context["results_" + str(cont)] = datas
-            cont += 1
-            datas = []
-    if cnt % 3 != 0:
-        context["results_" + str(cont)] = datas
+    context["results_1"] = datas
+    
     return context
 
 @app.route("/")
