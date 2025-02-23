@@ -15,15 +15,19 @@
     <div class="w-full max-w-md">
         <form method="post" action="/results" class="space-y-4">
             <div>
-                <label for="user_input" class="block text-sm font-medium text-gray-700">Product name</label>
-                <input type="text" id="user_input" name="user_input" required class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product name">
+                <label for="user_input" class="block text-sm font-medium text-gray-700">Product name*</label>
+                <input type="text" id="user_input" name="user_input" required class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product name" >
+            </div>
+	    <div>
+                <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
+                <input type="text" id="brand" name="brand" class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter brand name">
             </div>
             <div>
-                <input value=1 type="number" id="page_number" name="page_number" required class="hidden mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter page number">
+                <input value=1 type="number" id="page_number" name="page_number" class="hidden mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter page number">
             </div>
             <div>
                 <label for="product_number" class="block text-sm font-medium text-gray-700">Product number</label>
-                <input type="number" id="product_number" name="product_number" required class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product number per page">
+                <input type="number" id="product_number" name="product_number" class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product number per page">
             </div>
             <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors">Submit</button>
         </form>

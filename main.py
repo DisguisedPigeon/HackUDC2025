@@ -18,6 +18,9 @@ import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 
+# Set brand dict
+brand_dict = ["lefties", "massimo_dutti", "oysho", "pull_and_bear", "stradivarius", "zara", "zara_home"]
+
 # Configure logger
 handler = colorlog.StreamHandler()
 handler.setFormatter(
@@ -189,13 +192,24 @@ async def visual_search_front(request: Request):
 async def results_front(
     request: Request,
     user_input: str = Form(...),
+    brand: str = Form(...),
     page_number: str = Form(...),
     product_number: str = Form(...),
 ):
     logger.info(
         f"Iniciando búsqueda visual con image_url: {user_input}, page: {page_number}, per_page: {product_number}"
     )
-    params = {"query": user_input, "page": page_number, "perPage": product_number}
+    if brand:
+        if brand in brand_dict:
+            params = {"query": user_input, "brand": brand, "page": page_number, "perPage": product_number}
+        else:
+            logger.error(f"Error en la búsqueda por texto")
+            raise HTTPException(
+                status_code=400,
+                detail=f"The specified brand is not in the following: {brand_dict}",
+            )
+    else:
+        params = {"query": user_input, "page": page_number, "perPage": product_number}
 
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
@@ -233,12 +247,12 @@ async def text_search_front(request: Request):
 
 
 @app.get("/text-search")
-async def text_search(query: str, page: int = 1, per_page: int = 5):
+async def text_search(query: str, brand: str, page: int = 1, per_page: int = 5):
     logger.info(
         f"Iniciando búsqueda de texto con query: {query}, page: {page}, per_page: {per_page}"
     )
 
-    params = {"query": query, "page": page, "perPage": per_page}
+    params = {"query": query, "brand": brand, "page": page, "perPage": per_page}
 
     logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
