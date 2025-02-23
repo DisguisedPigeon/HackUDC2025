@@ -73,6 +73,7 @@
 			
 			renderer = new THREE.WebGLRenderer({ antialias: true });
 			renderer.setSize( (window.innerWidth / 3), (window.innerHeight / 2) );
+			renderer.setClearColor(0x000000, 0)
 			
 			// Append renderer's canvas to the placeholder div
 			document.getElementById('placeholder').innerHTML = "";
