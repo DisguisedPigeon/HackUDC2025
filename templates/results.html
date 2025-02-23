@@ -5,48 +5,21 @@
 	<h1 class="text-3xl font-bold mb-8 text-center">Search Results</h1>
 	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 		{% for item in results_1 %}
-		<div class="bg-white shadow rounded-lg p-4">
+		<div class="bg-white shadow rounded-lg p-4 flex flex-col h-full">
 			<h2 class="text-xl font-semibold mb-2">{{ item.name }}</h2>
 			<p class="text-gray-600">{{ item.price }}</p>
 			<p class="text-gray-600">{{ item.oprice }}</p>
-			<p class="text-gray-600">{{ item.link }}</p>
 			<p class="text-gray-600">{{ item.brand }}</p>
-			<button type="button" class="mt-4 w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors" data-bs-toggle="modal" data-bs-target="#exampleModal">
+			<a href="{{ item.link }}" class="card-text">Go to shop</a>
+			<!-- Botón empujado hacia abajo -->
+			<button type="button" class="mt-auto w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors" data-bs-toggle="modal" data-bs-target="#exampleModal">
 				Preview
 			</button>
 		</div>
 		{% endfor %}
 	</div>
-
-	<div class="mt-8 flex justify-center">
-		<nav aria-label="Page navigation">
-			<ul class="flex space-x-2">
-				<li>
-					{% if page == 0 %}
-					<span class="px-3 py-2 bg-gray-200 text-gray-600 rounded">&laquo;</span>
-					{% else %}
-					<a href="#" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">&laquo;</a>
-					{% endif %}
-				</li>
-				{% if page == 0 %}
-				<li>
-					<span class="px-3 py-2 bg-blue-500 text-white rounded">1</span>
-				</li>
-				{% else %}
-				<li>
-					<a href="#" class="px-3 py-2 bg-gray-200 text-gray-600 rounded hover:bg-gray-300">1</a>
-				</li>
-				<li>
-					<span class="px-3 py-2 bg-blue-500 text-white rounded">{{ page + 1 }}</span>
-				</li>
-				{% endif %}
-				<li>
-					<a href="#" class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">&raquo;</a>
-				</li>
-			</ul>
-		</nav>
-	</div>
 </div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

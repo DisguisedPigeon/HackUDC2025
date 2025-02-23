@@ -158,7 +158,7 @@ def generate_context(data):
                 + symbol[item["price"]["currency"]]
                 if oprice == ""
                 else "Original price: None",
-                "link": "Link: " + item["link"],
+                "link": item["link"],
                 "brand": "Brand: " + item["brand"],
             }
         )
