@@ -2,6 +2,9 @@
 
 Submission for HackUDC 2025 for the Inditex proposal
 
+> [!NOTE]
+> Deployed on https://broemia.org
+
 ## Descripción del reto
 El objetivo es crear una aplicación web o móvil que integre la [API de Visual Search de Inditex](https://developer.inditex.com/apimktplc/web/products/pubapimkt/protocols/REST/apis/visual-search/overview) para facilitar la búsqueda de productos similares a una imagen proporcionada por la persona usuaria. La aplicación debe ser intuitiva, rápida y ofrecer resultados precisos al explorar el catálogo de productos.
 
