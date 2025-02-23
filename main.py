@@ -98,7 +98,6 @@ def generate_context(data):
     context = {}
     context["other"] = True
     context["page"] = 0  # page
-    # TODO: complete symbol dict
     symbol = {"EUR": "€"}
     cont = 1
     cnt = 1
