@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, HttpUrl
 import httpx
-from dotenv import load_dotenv, set_key
+from dotenv import load_dotenv, set_key, get_key
 import os
 import shutil
 from uuid import uuid4
@@ -60,8 +60,13 @@ scheduler = BackgroundScheduler()
 def truncate_token(token):
     return token[:10] + "..."
 
+GLOBAL_HEADERS = {
+    "Content-Type": "application/json",
+    "User-Agent": "HackUDC2025/1.0",
+}
 
 def get_token():
+
     data = {"grant_type": "client_credentials", "scope": scope}
 
     headers = {
@@ -86,12 +91,15 @@ def get_token():
         )
 
         next_refresh = datetime.now() + timedelta(
-            seconds=expires_in_seconds - 300
+            seconds = expires_in_seconds - 300
         )  # 5 minutos antes de que expire
         scheduler.add_job(get_token, "date", run_date=next_refresh)
         logger.info(
-            f"Próxima actualización programada para: {next_refresh.strftime('%Y-%m-%d %H:%M:%S')}"
+            f"Próxima actualización programada para: {next_refresh.strftime('%Y-%m-%d %H:%M:%S')} (5 mins antes de su expiración)"
         )
+	# The token is now globaly accesible 
+        GLOBAL_HEADERS["Authorization"] = f"Bearer {get_key('.env', 'ID_TOKEN')}"
+
     else:
         logger.error(f" {response.status_code} {response.text}")
 
@@ -129,11 +137,7 @@ INDITEX_SEARCH_API_URL = "https://api.inditex.com/searchpmpa/products"
 INDITEX_VISUAL_SEARCH_API_URL = "https://api.inditex.com/pubvsearch/products"
 DOMAIN = os.getenv("DOMAIN", "http://localhost:8000")
 
-GLOBAL_HEADERS = {
-    "Authorization": f"Bearer {os.getenv('ID_TOKEN')}",
-    "Content-Type": "application/json",
-    "User-Agent": "HackUDC2025/1.0",
-}
+
 
 logger.info(f"INDITEX_SEARCH_API_URL: {INDITEX_SEARCH_API_URL}")
 logger.info(f"INDITEX_VISUAL_SEARCH_API_URL: {INDITEX_VISUAL_SEARCH_API_URL}")
@@ -211,7 +215,7 @@ async def results_front(
     else:
         params = {"query": user_input, "page": page_number, "perPage": product_number}
 
-    logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    #logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
     async with httpx.AsyncClient() as client:
@@ -254,7 +258,7 @@ async def text_search(query: str, brand: str, page: int = 1, per_page: int = 5):
 
     params = {"query": query, "brand": brand, "page": page, "perPage": per_page}
 
-    logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    #logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
     try:
@@ -287,7 +291,7 @@ async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
 
     params = {"image": str(image_url), "page": page, "perPage": per_page}
 
-    logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    #logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
     try:
@@ -341,7 +345,7 @@ async def upload_and_search(
         "perPage": int(product_number),
     }
 
-    logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    #logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
     try:
