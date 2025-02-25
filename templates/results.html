@@ -10,9 +10,9 @@
 			<p class="text-gray-600">{{ item.price }}</p>
 			<p class="text-gray-600">{{ item.oprice }}</p>
 			<p class="text-gray-600">{{ item.brand }}</p>
-			<a href="{{ item.link }}" class="card-text">Go to shop</a>
-			<!-- Botón empujado hacia abajo -->
-			<button type="button" class="mt-auto w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors" data-bs-toggle="modal" data-bs-target="#exampleModal">
+			<a href="{{ item.link }}" class="text-blue-500 hover:underline">Go to shop</a>
+			<!-- Button pushed to the bottom -->
+			<button type="button" class="mt-auto w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors" data-modal-target="exampleModal">
 				Preview
 			</button>
 		</div>
@@ -20,22 +20,23 @@
 	</div>
 </div>
 
-
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-fullscreen-sm-down" style="width: 50vw; height: 50vh; max-width: none;">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body d-flex justify-content-center">
-				<div id="placeholder">
-					<!-- The canvas will be injected here by Three.js -->
-				</div>
+<div id="exampleModal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center hidden">
+	<div class="bg-white rounded-lg shadow-lg w-1/2 h-1/2 p-4 relative">
+		<button type="button" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700" onclick="closeModal()">&times;</button>
+		<div class="flex justify-center items-center h-full">
+			<div id="placeholder">
+				<!-- The canvas will be injected here by Three.js -->
 			</div>
 		</div>
 	</div>
 </div>
+
+<script>
+	function closeModal() {
+		document.getElementById('exampleModal').classList.add('hidden');
+	}
+</script>
 
 <script type="importmap">
     {
@@ -48,18 +49,20 @@
 </script>
 <script type="module">
     import * as THREE from "three";
-	import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
-	import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
+    import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader.js";
+    import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader.js";
 
-	document.addEventListener("DOMContentLoaded", function () {
-		var myModal = document.getElementById("exampleModal");
-		myModal.addEventListener("shown.bs.modal", function (e) {
-			setModel(e.relatedTarget.parentElement.getElementsByClassName("text-xl")[0].textContent);
-		});
-	});
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll("[data-modal-target]").forEach(button => {
+            button.addEventListener("click", function () {
+                document.getElementById("exampleModal").classList.remove("hidden");
+                setModel(this.parentElement.querySelector(".text-xl").textContent);
+            });
+        });
+    });
 
-	function setModel(title) {
-		fetch("/clothes-3d?product_name=" + title).then(function(response) {
+    function setModel(title) {
+    fetch("/clothes-3d?product_name=" + title).then(function(response) {
 			return response.json();
 		}).then(function(data) {
 
@@ -159,7 +162,7 @@
 		}).catch(function(err) {
 			console.log('Fetch Error :-S', err);
 		});
-	}
-
+    }
 </script>
-{% endblock %}	
+{% endblock %}
+

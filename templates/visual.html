@@ -2,10 +2,10 @@
 
 {% block visual %}
 <li>
-    <a class="btn disabled" href="/">Visual search</a>
+    <a class="bg-gray-300 text-gray-500 px-4 py-2 rounded cursor-not-allowed" href="/">Visual search</a>
 </li>
 <li>
-    <a class="btn btn-secondary" href="/text">Text search</a>
+    <a class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors" href="/text">Text search</a>
 </li>
 {% endblock %}
 
@@ -17,7 +17,7 @@
             <div>
                 <input type="file" id="myFile" name="myFile" required class="w-full p-2 border border-gray-300 rounded">
             </div>
-            <input value=1 type="number" id="page_number" name="page_number" required class="hidden mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter page number">
+            <input value=1 type="number" id="page_number" name="page_number" required class="hidden" placeholder="Enter page number">
             <div>
                 <label for="product_number" class="block text-sm font-medium text-gray-700">Product number</label>
                 <input type="number" id="product_number" name="product_number" required class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product number per page">

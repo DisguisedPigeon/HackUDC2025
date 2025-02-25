@@ -1,25 +1,33 @@
+import hashlib
+import json
 import logging
+import os
+import re
+import shutil
+from datetime import datetime, timedelta
+from uuid import uuid4
+
 import colorlog
-from fastapi import FastAPI, HTTPException, Request, File, UploadFile, Response, Form
-from fastapi.responses import HTMLResponse
+import httpx
+import requests
+from apscheduler.schedulers.background import BackgroundScheduler
+from dotenv import get_key, load_dotenv, set_key
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, HttpUrl
-import httpx
-from dotenv import load_dotenv, set_key, get_key
-import os
-import shutil
-from uuid import uuid4
-import json
-import re
-import hashlib
-import requests
-from apscheduler.schedulers.background import BackgroundScheduler
-from datetime import datetime, timedelta
 
 # Set brand dict
-brand_dict = ["lefties", "massimo_dutti", "oysho", "pull_and_bear", "stradivarius", "zara", "zara_home"]
+brand_dict = [
+    "lefties",
+    "massimo_dutti",
+    "oysho",
+    "pull_and_bear",
+    "stradivarius",
+    "zara",
+    "zara_home",
+]
 
 # Configure logger
 handler = colorlog.StreamHandler()
@@ -60,13 +68,14 @@ scheduler = BackgroundScheduler()
 def truncate_token(token):
     return token[:10] + "..."
 
+
 GLOBAL_HEADERS = {
     "Content-Type": "application/json",
     "User-Agent": "HackUDC2025/1.0",
 }
 
-def get_token():
 
+def get_token():
     data = {"grant_type": "client_credentials", "scope": scope}
 
     headers = {
@@ -91,13 +100,13 @@ def get_token():
         )
 
         next_refresh = datetime.now() + timedelta(
-            seconds = expires_in_seconds - 300
+            seconds=expires_in_seconds - 300
         )  # 5 minutos antes de que expire
         scheduler.add_job(get_token, "date", run_date=next_refresh)
         logger.info(
             f"Próxima actualización programada para: {next_refresh.strftime('%Y-%m-%d %H:%M:%S')} (5 mins antes de su expiración)"
         )
-	# The token is now globaly accesible 
+        # The token is now globaly accesible
         GLOBAL_HEADERS["Authorization"] = f"Bearer {get_key('.env', 'ID_TOKEN')}"
 
     else:
@@ -138,7 +147,6 @@ INDITEX_VISUAL_SEARCH_API_URL = "https://api.inditex.com/pubvsearch/products"
 DOMAIN = os.getenv("DOMAIN", "http://localhost:8000")
 
 
-
 logger.info(f"INDITEX_SEARCH_API_URL: {INDITEX_SEARCH_API_URL}")
 logger.info(f"INDITEX_VISUAL_SEARCH_API_URL: {INDITEX_VISUAL_SEARCH_API_URL}")
 logger.info(f"DOMAIN: {DOMAIN}")
@@ -161,7 +169,6 @@ def generate_context(data):
     context["other"] = True
     context["page"] = 0  # page
     symbol = {"EUR": "€"}
-    limits = len(data)
     datas = []
     for item in data:
         oprice = item["price"]["value"]["original"]
@@ -205,9 +212,14 @@ async def results_front(
     )
     if brand:
         if brand in brand_dict:
-            params = {"query": user_input, "brand": brand, "page": page_number, "perPage": product_number}
+            params = {
+                "query": user_input,
+                "brand": brand,
+                "page": page_number,
+                "perPage": product_number,
+            }
         else:
-            logger.error(f"Error en la búsqueda por texto")
+            logger.error("Error en la búsqueda por texto")
             raise HTTPException(
                 status_code=400,
                 detail=f"The specified brand is not in the following: {brand_dict}",
@@ -215,7 +227,7 @@ async def results_front(
     else:
         params = {"query": user_input, "page": page_number, "perPage": product_number}
 
-    #logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    # logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
     async with httpx.AsyncClient() as client:
@@ -258,7 +270,7 @@ async def text_search(query: str, brand: str, page: int = 1, per_page: int = 5):
 
     params = {"query": query, "brand": brand, "page": page, "perPage": per_page}
 
-    #logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    # logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
     try:
@@ -291,7 +303,7 @@ async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
 
     params = {"image": str(image_url), "page": page, "perPage": per_page}
 
-    #logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    # logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
     try:
@@ -345,7 +357,7 @@ async def upload_and_search(
         "perPage": int(product_number),
     }
 
-    #logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
+    # logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
 
     try:

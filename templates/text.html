@@ -2,10 +2,10 @@
 
 {% block text %}
 <li>
-    <a class="btn btn-secondary" href="/">Visual search</a>
+    <a class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors" href="/">Visual search</a>
 </li>
 <li>
-    <a class="btn disabled" href="/text">Text search</a>
+    <a class="bg-gray-300 text-gray-500 px-4 py-2 rounded cursor-not-allowed" href="/text">Text search</a>
 </li>
 {% endblock %}
 
@@ -23,7 +23,7 @@
                 <input type="text" id="brand" name="brand" class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter brand name">
             </div>
             <div>
-                <input value=1 type="number" id="page_number" name="page_number" class="hidden mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter page number">
+                <input value=1 type="number" id="page_number" name="page_number" class="hidden" placeholder="Enter page number">
             </div>
             <div>
                 <label for="product_number" class="block text-sm font-medium text-gray-700">Product number</label>
@@ -34,3 +34,4 @@
     </div>
 </div>
 {% endblock %}
+
