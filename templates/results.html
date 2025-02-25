@@ -10,7 +10,7 @@
 			<p class="text-gray-600">{{ item.price }}</p>
 			<p class="text-gray-600">{{ item.oprice }}</p>
 			<p class="text-gray-600">{{ item.brand }}</p>
-			<a href="{{ item.link }}" class="text-blue-500 hover:underline">Go to shop</a>
+			<a href="{{ item.link }}" class="text-blue-500 my-5 hover:underline">Go to shop</a>
 			<!-- Button pushed to the bottom -->
 			<button type="button" class="mt-auto w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors" data-modal-target="exampleModal">
 				Preview
@@ -35,6 +35,7 @@
 <script>
 	function closeModal() {
 		document.getElementById('exampleModal').classList.add('hidden');
+		document.body.classList.remove("overflow-hidden")
 	}
 </script>
 
@@ -56,6 +57,7 @@
         document.querySelectorAll("[data-modal-target]").forEach(button => {
             button.addEventListener("click", function () {
                 document.getElementById("exampleModal").classList.remove("hidden");
+		document.body.classList.add("overflow-hidden")
                 setModel(this.parentElement.querySelector(".text-xl").textContent);
             });
         });
