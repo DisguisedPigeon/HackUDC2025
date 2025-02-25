@@ -189,7 +189,7 @@ def generate_context(data):
                 "brand": "Brand: " + item["brand"],
             }
         )
-    context["results_1"] = datas
+    context["results"] = datas
 
     return context
 

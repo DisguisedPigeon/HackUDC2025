@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 py-8">
 	<h1 class="text-3xl font-bold mb-8 text-center">Search Results</h1>
 	<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-		{% for item in results_1 %}
+		{% for item in results %}
 		<div class="bg-white shadow rounded-lg p-4 flex flex-col h-full">
 			<h2 class="text-xl font-semibold mb-2">{{ item.name }}</h2>
 			<p class="text-gray-600">{{ item.price }}</p>
