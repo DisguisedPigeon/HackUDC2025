@@ -18,17 +18,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, HttpUrl
 
-# Set brand dict
-brand_dict = [
-    "lefties",
-    "massimo_dutti",
-    "oysho",
-    "pull_and_bear",
-    "stradivarius",
-    "zara",
-    "zara_home",
-]
-
 # Configure logger
 handler = colorlog.StreamHandler()
 handler.setFormatter(
@@ -153,9 +142,10 @@ logger.info(f"DOMAIN: {DOMAIN}")
 
 
 class TextSearchRequest(BaseModel):
-    query: str
-    page: int = 1
-    per_page: int = 5
+    product: str
+    brand: str
+    page_number: int = 1
+    product_number: int = 5
 
 
 class VisualSearchRequest(BaseModel):
@@ -167,7 +157,7 @@ class VisualSearchRequest(BaseModel):
 def generate_context(data):
     context = {}
     context["other"] = True
-    context["page"] = 0  # page
+    context["page"] = 0
     symbol = {"EUR": "€"}
     datas = []
     for item in data:
@@ -183,7 +173,7 @@ def generate_context(data):
                 + str(oprice)
                 + " "
                 + symbol[item["price"]["currency"]]
-                if oprice == ""
+                if oprice
                 else "Original price: None",
                 "link": item["link"],
                 "brand": "Brand: " + item["brand"],
@@ -199,33 +189,23 @@ async def visual_search_front(request: Request):
     return templates.TemplateResponse(request=request, name="visual.html", context={})
 
 
-@app.post("/results")
+@app.post("/text-results")
 async def results_front(
     request: Request,
-    user_input: str = Form(...),
-    brand: str = Form(...),
-    page_number: str = Form(...),
-    product_number: str = Form(...),
+    form_data: TextSearchRequest = Form(...)
 ):
     logger.info(
-        f"Iniciando búsqueda visual con image_url: {user_input}, page: {page_number}, per_page: {product_number}"
+        f"Iniciando búsqueda visual con image_url: {form_data.product}, page: {form_data.page_number}, per_page: {form_data.product_number}"
     )
-    if brand:
-        if brand in brand_dict:
+    if form_data.brand:
             params = {
-                "query": user_input,
-                "brand": brand,
-                "page": page_number,
-                "perPage": product_number,
+                "query": form_data.product,
+                "brand": form_data.brand,
+                "page": form_data.page_number,
+                "perPage": form_data.product_number,
             }
-        else:
-            logger.error("Error en la búsqueda por texto")
-            raise HTTPException(
-                status_code=400,
-                detail=f"The specified brand is not in the following: {brand_dict}",
-            )
     else:
-        params = {"query": user_input, "page": page_number, "perPage": product_number}
+        params = {"query": form_data.product, "page": form_data.page_number, "perPage": form_data.product_number}
 
     # logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")

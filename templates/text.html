@@ -1,5 +1,101 @@
 {% extends 'base.html' %}
 
+
+{% block js %}
+<script src="https://cdn.tailwindcss.com/3.4.0"></script>
+<script>
+    // JavaScript to handle dropdown selection (The tailwind implementation: https://tailwindui.com/components/application-ui/elements/dropdowns in HTML doesn't include the javascript logic)
+    function selectOption(value) {
+      // Set the selected value in the hidden input field
+      document.getElementById("brand").value = value;
+      // Update the button text to show the selected value
+      document.getElementById("menu-button").textContent = value;
+      toggleDropdown();
+    }
+
+  // Function to toggle the dropdown
+    function toggleDropdown() {
+      const dropDownMenu = document.getElementById("dropdown-menu");
+      const isDeleted = dropDownMenu.innerHTML === "";
+
+      // Toggle visibility
+      if (isDeleted) {
+	createDropDown()
+        dropDownMenu.classList.remove("opacity-0", "scale-95");
+        dropDownMenu.classList.add("opacity-100", "scale-100");
+      } else {
+        dropDownMenu.classList.remove("opacity-100", "scale-100");
+        dropDownMenu.classList.add("opacity-0", "scale-95");
+	deleteDropDown();
+      }
+    }
+
+    // Close the dropdown when clicking outside
+    document.addEventListener("click", (event) => {
+      const button = document.getElementById("menu-button");
+
+      // Check if the click is outside the dropdown and button
+      /*
+      if (!dropDownMenu.contains(event.target) && !button.contains(event.target)) {
+              dropDownMenu.classList.remove("opacity-100", "scale-100");
+              dropDownMenu.classList.add("opacity-0", "scale-95");
+	      deleteDropDown();
+      }
+      */
+    });
+    function createDropDown(){
+	// Create the parent div
+	const divElement = document.createElement("div");
+	divElement.id = "elements";
+	divElement.className = "py-1";
+	divElement.setAttribute("role", "none");
+
+	// Array of menu items
+	const menuItems = [
+	  { text: "lefties", id: "menu-item-0", value: "lefties" },
+	  { text: "massimo_dutti", id: "menu-item-1", value: "massimo_dutti" },
+	  { text: "oysho", id: "menu-item-2", value: "oysho" },
+	  { text: "pull_and_bear", id: "menu-item-3", value: "pull_and_bear" },
+	  { text: "stradivarius", id: "menu-item-4", value: "stradivarius" },
+	  { text: "zara", id: "menu-item-5", value: "zara" },
+	  { text: "zara_home", id: "menu-item-6", value: "zara_home" },
+	];
+
+	// Function to create a menu item
+	function createMenuItem(item) {
+	  const link = document.createElement("a");
+	  link.href = "#";
+	  link.className = "block px-4 py-2 text-sm text-gray-700";
+	  link.setAttribute("role", "menuitem");
+	  link.setAttribute("tabindex", "-1");
+	  link.id = item.id;
+	  link.textContent = item.text;
+
+	  // Add the onclick event
+	  link.onclick = () => selectOption(item.value);
+
+	  return link;
+	}
+
+	// Append each menu item to the div
+	menuItems.forEach((item) => {
+	  const menuItem = createMenuItem(item);
+	  divElement.appendChild(menuItem);
+	});
+
+	// Append the div to the body or another container
+        const dropDownMenu = document.getElementById("dropdown-menu");
+	dropDownMenu.appendChild(divElement);
+	}
+    function deleteDropDown(){
+	const dropDownMenu = document.getElementById("dropdown-menu");
+        const isDeleted = dropDownMenu.innerHTML === "";
+	if(!isDeleted){
+        	dropDownMenu.innerHTML = "";
+	}
+    	}
+  </script>
+{% endblock %}
 {% block text %}
 <li>
     <a class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors" href="/">Visual search</a>
@@ -13,25 +109,44 @@
 <div class="flex flex-col items-center justify-center min-h-[calc(100vh-64px)]">
     <h1 class="text-3xl font-bold mb-8">Text Search</h1>
     <div class="w-full max-w-md">
-        <form method="post" action="/results" class="space-y-4">
+        <form method="post" action="/text-results" class="space-y-4">
             <div>
-                <label for="user_input" class="block text-sm font-medium text-gray-700">Product name*</label>
-                <input type="text" id="user_input" name="user_input" required class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product name" >
+                <label for="product" class="block text-sm font-medium text-gray-700">Product name<p style="color:#FF2D00">*</p></label>
+                <input type="text" id="product" name="product" required class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product name" >
             </div>
-	    <div>
-                <label for="brand" class="block text-sm font-medium text-gray-700">Brand</label>
-                <input type="text" id="brand" name="brand" class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter brand name">
-            </div>
+	    <!-- Dropdown menu for brand -->
+	      <!-- Store dropdown user selection-->
+              <input type="hidden" id="brand" name="brand">
+	    <div class="relative inline-block text-left">
+	      <div>
+	        <button type="button" onclick="toggleDropdown()" class=" inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" id="menu-button" aria-expanded="true" aria-haspopup="true">
+	          Brand
+	          <svg class="-mr-1 size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+		    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+	          </svg>
+	        </button>
+	      </div>
+	    <!-- When the dropdown is active, an <a> tag list is injected inside the following div-->
+	    <div id="dropdown-menu" class="opacity-0 scale-95 absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1"></div>
+
             <div>
                 <input value=1 type="number" id="page_number" name="page_number" class="hidden" placeholder="Enter page number">
             </div>
             <div>
-                <label for="product_number" class="block text-sm font-medium text-gray-700">Product number</label>
-                <input type="number" id="product_number" name="product_number" class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product number per page">
+                <label for="product_number" class="block text-sm font-medium text-gray-700">Product number per page <p style="color:#BBBBBB">(default: 5)</p></label>
+                <input value=5 type="number" id="product_number" name="product_number" class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product number per page ">
             </div>
             <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors">Submit</button>
         </form>
     </div>
 </div>
 {% endblock %}
-
+<!--div id="elements" class="py-1" role="none">
+	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0" onclick="selectOption('lefties')">lefties</a>
+	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-1" onclick="selectOption('massimo_dutti')">massimo_dutti</a>
+	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('oysho')">oysho</a>
+	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('pull_and_bear')">pull_and_bear</a>
+	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('stradivarius')">stradivarius</a>
+	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('zara')">zara</a>
+	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('zara_home')">zara_home</a>
+	      </div-->
