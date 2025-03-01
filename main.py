@@ -141,15 +141,16 @@ logger.info(f"INDITEX_VISUAL_SEARCH_API_URL: {INDITEX_VISUAL_SEARCH_API_URL}")
 logger.info(f"DOMAIN: {DOMAIN}")
 
 
+#Pydantic models
 class TextSearchRequest(BaseModel):
     product: str
     brand: str
-    page_number: int = 1
-    product_number: int = 5
+    page: int = 1
+    per_page: int = 5
 
 
 class VisualSearchRequest(BaseModel):
-    image_url: HttpUrl
+    myFile: UploadFile
     page: int = 1
     per_page: int = 5
 
@@ -195,17 +196,17 @@ async def results_front(
     form_data: TextSearchRequest = Form(...)
 ):
     logger.info(
-        f"Iniciando búsqueda visual con image_url: {form_data.product}, page: {form_data.page_number}, per_page: {form_data.product_number}"
+        f"Iniciando búsqueda visual con image_url: {form_data.product}, page: {form_data.page}, per_page: {form_data.per_page}"
     )
     if form_data.brand:
             params = {
                 "query": form_data.product,
                 "brand": form_data.brand,
-                "page": form_data.page_number,
-                "perPage": form_data.product_number,
+                "page": form_data.page,
+                "perPage": form_data.per_page,
             }
     else:
-        params = {"query": form_data.product, "page": form_data.page_number, "perPage": form_data.product_number}
+        params = {"query": form_data.product, "page": form_data.page, "perPage": form_data.per_page}
 
     # logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
     logger.info(f"Parámetros de la solicitud: {params}")
@@ -219,6 +220,7 @@ async def results_front(
 
     if response.status_code == 200:
         logger.info("Búsqueda textual exitosa")
+	# Process json response
         data = response.json()
         context = generate_context(data)
 
@@ -308,21 +310,19 @@ async def visual_search(image_url: HttpUrl, page: int = 1, per_page: int = 5):
         raise HTTPException(status_code=500, detail=f"Connection error: {exc}")
 
 
-@app.post("/upload-and-search")
+@app.post("/visual-results")
 async def upload_and_search(
     request: Request,
-    myFile: UploadFile = File(...),
-    page_number: str = Form(...),
-    product_number: str = Form(...),
+    form_data: VisualSearchRequest = Form(...)
 ):
-    logger.info(f"Iniciando carga y búsqueda con archivo: {myFile.filename}")
+    logger.info(f"Iniciando carga y búsqueda con archivo: {form_data.myFile.filename}")
 
-    file_extension = os.path.splitext(myFile.filename)[1]
+    file_extension = os.path.splitext(form_data.myFile.filename)[1]
     unique_filename = f"{uuid4()}{file_extension}"
     file_path = os.path.join(UPLOAD_DIR, unique_filename)
 
     with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(myFile.file, buffer)
+        shutil.copyfileobj(form_data.myFile.file, buffer)
 
     if DOMAIN.startswith(("http://", "https://")):
         public_url = f"{DOMAIN}/uploads/{unique_filename}"
@@ -333,8 +333,8 @@ async def upload_and_search(
 
     params = {
         "image": public_url,
-        "page": int(page_number),
-        "perPage": int(product_number),
+        "page": int(form_data.page),
+        "perPage": int(form_data.per_page),
     }
 
     # logger.info(f"Headers de la solicitud: {GLOBAL_HEADERS}")
@@ -352,6 +352,8 @@ async def upload_and_search(
         if response.status_code == 200:
             api_response = response.json()
             logger.info("Búsqueda visual exitosa")
+
+	    # Process json response 
             data = response.json()
             context = generate_context(data)
 

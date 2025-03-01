@@ -13,14 +13,15 @@
 <div class="flex flex-col items-center justify-center min-h-[calc(100vh-64px)]">
     <h1 class="text-3xl font-bold mb-8">Visual Search</h1>
     <div class="w-full max-w-md">
-        <form method="post" action="/upload-and-search" enctype="multipart/form-data" class="space-y-4">
+        <form method="post" action="/visual-results" enctype="multipart/form-data" class="space-y-4">
             <div>
+                <label for="myFile" class="block text-sm font-medium text-gray-700">Image<p style="color:#FF2D00">*</p></label>
                 <input type="file" id="myFile" name="myFile" required class="w-full p-2 border border-gray-300 rounded">
             </div>
-            <input value=1 type="number" id="page_number" name="page_number" required class="hidden" placeholder="Enter page number">
+            <input value=1 type="number" id="page" name="page" required class="hidden" placeholder="Enter page number">
             <div>
-                <label for="product_number" class="block text-sm font-medium text-gray-700">Product number</label>
-                <input type="number" id="product_number" name="product_number" required class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product number per page">
+                <label for="per_page" class="block text-sm font-medium text-gray-700">Product number per page <p style="color:#BBBBBB">(default: 5)</p></label>
+                <input value=5 type="number" id="per_page" name="per_page" required class="mt-1 w-full p-2 border border-gray-300 rounded" placeholder="Enter product number per page">
             </div>
             <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition-colors">Submit</button>
         </form>
