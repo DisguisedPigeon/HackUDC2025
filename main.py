@@ -165,7 +165,7 @@ def generate_context(data):
         oprice = item["price"]["value"]["original"]
         datas.append(
             {
-                "name": item["name"],
+                "name": item["name"].upper(),
                 "price": "Price: "
                 + str(item["price"]["value"]["current"])
                 + " "

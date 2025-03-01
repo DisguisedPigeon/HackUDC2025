@@ -33,15 +33,14 @@
     // Close the dropdown when clicking outside
     document.addEventListener("click", (event) => {
       const button = document.getElementById("menu-button");
+      const dropDownMenu = document.getElementById("dropdown-menu");
 
       // Check if the click is outside the dropdown and button
-      /*
       if (!dropDownMenu.contains(event.target) && !button.contains(event.target)) {
               dropDownMenu.classList.remove("opacity-100", "scale-100");
               dropDownMenu.classList.add("opacity-0", "scale-95");
 	      deleteDropDown();
       }
-      */
     });
     function createDropDown(){
 	// Create the parent div
@@ -141,12 +140,3 @@
     </div>
 </div>
 {% endblock %}
-<!--div id="elements" class="py-1" role="none">
-	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-0" onclick="selectOption('lefties')">lefties</a>
-	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-1" onclick="selectOption('massimo_dutti')">massimo_dutti</a>
-	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('oysho')">oysho</a>
-	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('pull_and_bear')">pull_and_bear</a>
-	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('stradivarius')">stradivarius</a>
-	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('zara')">zara</a>
-	        <a href="#" class="block px-4 py-2 text-sm text-gray-700" role="menuitem" tabindex="-1" id="menu-item-2" onclick="selectOption('zara_home')">zara_home</a>
-	      </div-->
